@@ -12,9 +12,9 @@ class Player {
     int GAME_ID = Integer.parseInt(args[0]);
     int TEAM_NUMBER = Integer.parseInt(args[1]);
     int TEAM_SECRET = Integer.parseInt(args[2]);
-    System.out.printf("ID: %d, NUM: %d, SECRET: %d", GAME_ID, TEAM_NUMBER, TEAM_SECRET);
-    //Player p = new Player();
-    sendGet("http://www.bencarle.com/chess/display/" + GAME_ID);
+    System.out.printf("ID: %d, NUM: %d, SECRET: %d\n", GAME_ID, TEAM_NUMBER, TEAM_SECRET);
+    //sendGet("http://www.bencarle.com/chess/display/" + GAME_ID);
+    Bitboard b = new Bitboard();
   }
 
   static void sendGet(String url) throws Exception {
