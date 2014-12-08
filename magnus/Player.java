@@ -14,9 +14,12 @@ class Player {
     int TEAM_SECRET = Integer.parseInt(args[2]);
     System.out.printf("ID: %d, NUM: %d, SECRET: %d\n", GAME_ID, TEAM_NUMBER, TEAM_SECRET);
     //sendGet("http://www.bencarle.com/chess/display/" + GAME_ID);
-    Bitboard b = new Bitboard();
+    Bitboard b = new Bitboard(0);
     b.printPieceBitboards();
-    b.printWholeBitboard();
+    System.out.println("Occupied Board\n");
+    b.printBitboard(b.OCCUPIED_SQUARES);
+    System.out.println("\nEnemy Board\n");
+    b.printBitboard(b.ENEMY_SQUARES);
   }
 
   static void sendGet(String url) throws Exception {
