@@ -27,17 +27,22 @@ class Player {
     String TEAM_SECRET = args[2];
     int MY_COLOR = Integer.parseInt(args[3]);
 
+    Bitmap bitmap = new Bitmap();
+
     if (MY_COLOR == WHITE) {int ENEMY_COLOR = BLACK;}
     else {int ENEMY_COLOR = WHITE;}
 
     System.out.printf("ID: %d, NUM: %d, SECRET: %s\n", GAME_ID, TEAM_NUMBER, TEAM_SECRET);
     //sendGet("http://www.bencarle.com/chess/display/" + GAME_ID);
     Bitboard b = new Bitboard(MY_COLOR);
+    b.generateMoves(bitmap);
     b.printPieceBitboards();
     System.out.println("Occupied Board\n");
     b.printBitboard(b.OCCUPIED_SQUARES);
     System.out.println("\nEnemy Board\n");
     b.printBitboard(b.ENEMY_SQUARES);
+    System.out.println("\nPossible King Moves\n");
+    b.printBitboard(b.king_moves);
   }
 
   static String sendGet(String url) throws Exception {

@@ -2,8 +2,10 @@ package magnus;
 
 class Bitboard {
 
-  public static long[] masks = null;
-  public static long[][] board = null;
+  public long[] masks = null;
+  public long[][] board = null;
+  public int color = -1;
+  public long king_moves = 0L;
 
   // Useful boards
   private static long FULL_BOARD = 0xFFFFFFFFFFFFFFFFL;
@@ -13,11 +15,12 @@ class Bitboard {
   public static long ENEMY_AND_EMPTY_SQUARES = 0L;
   public static long OCCUPIED_SQUARES = 0L;
 
-  public Bitboard(int color){
+  public Bitboard(int player_color){
     masks = generateMasks();
+    color = player_color;
     board = generateNewBoard();
-    if (color == 0) generateUtilBoards(1);
-    else generateUtilBoards(0);
+    if (color == Player.WHITE) generateUtilBoards(Player.BLACK);
+    else generateUtilBoards(Player.WHITE);
   }
 
   private long[] generateMasks(){
@@ -70,6 +73,11 @@ class Bitboard {
     this.ENEMY_AND_EMPTY_SQUARES = this.EMPTY_SQUARES | temp;
   }
 
+
+  public void generateMoves(Bitmap b){
+    int index = Long.numberOfTrailingZeros(this.board[this.color][Player.KING]);
+    this.king_moves = b.king_xray[index] & (ENEMY_AND_EMPTY_SQUARES);
+  }
 
   public void printBitboard(long board){
     String line = "";
