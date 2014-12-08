@@ -33,19 +33,19 @@ class Bitboard {
     // 0 = King, 1 = Queen, 2 = Rook, 3 = Bishop, 4 = Knight, 5 = Pawn
     long[][] output = new long[2][6];
 
-    output[0][0] = 0x0000000000000010L;
-    output[0][1] = 0x0000000000000008L;
-    output[0][2] = 0x0000000000000081L;
-    output[0][3] = 0x0000000000000024L;
-    output[0][4] = 0x0000000000000042L;
-    output[0][5] = 0x000000000000FF00L;
+    output[Player.WHITE][Player.KING] = 0x0000000000000010L;
+    output[Player.WHITE][Player.QUEEN] = 0x0000000000000008L;
+    output[Player.WHITE][Player.ROOK] = 0x0000000000000081L;
+    output[Player.WHITE][Player.BISHOP] = 0x0000000000000024L;
+    output[Player.WHITE][Player.KNIGHT] = 0x0000000000000042L;
+    output[Player.WHITE][Player.PAWN] = 0x000000000000FF00L;
 
-    output[1][0] = 0x1000000000000000L;
-    output[1][1] = 0x0800000000000000L;
-    output[1][2] = 0x8100000000000000L;
-    output[1][3] = 0x2400000000000000L;
-    output[1][4] = 0x4200000000000000L;
-    output[1][5] = 0x00FF000000000000L;
+    output[Player.BLACK][Player.KING] = 0x1000000000000000L;
+    output[Player.BLACK][Player.QUEEN] = 0x0800000000000000L;
+    output[Player.BLACK][Player.ROOK] = 0x8100000000000000L;
+    output[Player.BLACK][Player.BISHOP] = 0x2400000000000000L;
+    output[Player.BLACK][Player.KNIGHT] = 0x4200000000000000L;
+    output[Player.BLACK][Player.PAWN] = 0x00FF000000000000L;
 
     return output;
   }

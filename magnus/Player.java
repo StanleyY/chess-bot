@@ -8,6 +8,15 @@ import java.net.URL;
 
 class Player {
 
+  public static final int WHITE = 0;
+  public static final int BLACK = 1;
+  public static final int KING = 0;
+  public static final int QUEEN = 1;
+  public static final int ROOK = 2;
+  public static final int BISHOP = 3;
+  public static final int KNIGHT = 4;
+  public static final int PAWN = 5;
+
   public static void main(String[] args) throws Exception{
     if (args.length < 4) {
       System.out.println("Usage: java Player GAME_ID TEAM_NUMBER TEAM_SECRET MY_COLOR(0 or 1)");
@@ -18,8 +27,8 @@ class Player {
     int TEAM_SECRET = Integer.parseInt(args[2]);
     int MY_COLOR = Integer.parseInt(args[3]);
 
-    if (MY_COLOR == 0) {int ENEMY_COLOR = 1;}
-    else {int ENEMY_COLOR = 0;}
+    if (MY_COLOR == WHITE) {int ENEMY_COLOR = BLACK;}
+    else {int ENEMY_COLOR = WHITE;}
 
     System.out.printf("ID: %d, NUM: %d, SECRET: %d\n", GAME_ID, TEAM_NUMBER, TEAM_SECRET);
     //sendGet("http://www.bencarle.com/chess/display/" + GAME_ID);
