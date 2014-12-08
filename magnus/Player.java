@@ -24,13 +24,13 @@ class Player {
     }
     int GAME_ID = Integer.parseInt(args[0]);
     int TEAM_NUMBER = Integer.parseInt(args[1]);
-    int TEAM_SECRET = Integer.parseInt(args[2]);
+    String TEAM_SECRET = args[2];
     int MY_COLOR = Integer.parseInt(args[3]);
 
     if (MY_COLOR == WHITE) {int ENEMY_COLOR = BLACK;}
     else {int ENEMY_COLOR = WHITE;}
 
-    System.out.printf("ID: %d, NUM: %d, SECRET: %d\n", GAME_ID, TEAM_NUMBER, TEAM_SECRET);
+    System.out.printf("ID: %d, NUM: %d, SECRET: %s\n", GAME_ID, TEAM_NUMBER, TEAM_SECRET);
     //sendGet("http://www.bencarle.com/chess/display/" + GAME_ID);
     Bitboard b = new Bitboard(MY_COLOR);
     b.printPieceBitboards();
