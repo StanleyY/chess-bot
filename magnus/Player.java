@@ -15,6 +15,8 @@ class Player {
     System.out.printf("ID: %d, NUM: %d, SECRET: %d\n", GAME_ID, TEAM_NUMBER, TEAM_SECRET);
     //sendGet("http://www.bencarle.com/chess/display/" + GAME_ID);
     Bitboard b = new Bitboard();
+    b.printPieceBitboards();
+    b.printWholeBitboard();
   }
 
   static void sendGet(String url) throws Exception {
