@@ -31,7 +31,7 @@ class Player {
     b.printBitboard(b.ENEMY_SQUARES);
   }
 
-  static void sendGet(String url) throws Exception {
+  static String sendGet(String url) throws Exception {
     URL obj = new URL(url);
     HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
@@ -51,7 +51,7 @@ class Player {
     }
     in.close();
 
-    System.out.println(response.toString());
+    return response.toString();
 
   }
 }
