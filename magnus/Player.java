@@ -9,12 +9,21 @@ import java.net.URL;
 class Player {
 
   public static void main(String[] args) throws Exception{
+    if (args.length < 4) {
+      System.out.println("Usage: java Player GAME_ID TEAM_NUMBER TEAM_SECRET MY_COLOR(0 or 1)");
+      System.exit(1);
+    }
     int GAME_ID = Integer.parseInt(args[0]);
     int TEAM_NUMBER = Integer.parseInt(args[1]);
     int TEAM_SECRET = Integer.parseInt(args[2]);
+    int MY_COLOR = Integer.parseInt(args[3]);
+
+    if (MY_COLOR == 0) {int ENEMY_COLOR = 1;}
+    else {int ENEMY_COLOR = 0;}
+
     System.out.printf("ID: %d, NUM: %d, SECRET: %d\n", GAME_ID, TEAM_NUMBER, TEAM_SECRET);
     //sendGet("http://www.bencarle.com/chess/display/" + GAME_ID);
-    Bitboard b = new Bitboard(0);
+    Bitboard b = new Bitboard(MY_COLOR);
     b.printPieceBitboards();
     System.out.println("Occupied Board\n");
     b.printBitboard(b.OCCUPIED_SQUARES);
