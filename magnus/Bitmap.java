@@ -16,7 +16,7 @@ class Bitmap{
     long[] output = new long[64];
     long temp;
     long king_xray;
-    for (int i = 9; i < 55; i++){
+    for (int i = 1; i < 63; i++){
       // Ignore File A and H.
       if (i % 8 != 0 && i % 8 != 7) {
         temp = 1L << i;
@@ -58,32 +58,6 @@ class Bitmap{
       king_xray = king_xray | (temp >>> 9);
       king_xray = king_xray | (temp >>> 1);
       king_xray = king_xray | (temp << 7);
-
-      output[i] = king_xray;
-    }
-    // Rank 1
-    for (int i = 1; i < 7; i++){
-      temp = 1L << i;
-      king_xray = 0L;
-      //left and right
-      king_xray = king_xray | (temp << 1) | (temp >>> 1);
-      // up
-      king_xray = king_xray | (temp << 7);
-      king_xray = king_xray | (temp << 8);
-      king_xray = king_xray | (temp << 9);
-
-      output[i] = king_xray;
-    }
-    // Rank 8
-    for (int i = 57; i < 63; i++){
-      temp = 1L << i;
-      king_xray = 0L;
-      //left and right
-      king_xray = king_xray | (temp << 1) | (temp >>> 1);
-      // down
-      king_xray = king_xray | (temp >>> 7);
-      king_xray = king_xray | (temp >>> 8);
-      king_xray = king_xray | (temp >>> 9);
 
       output[i] = king_xray;
     }
