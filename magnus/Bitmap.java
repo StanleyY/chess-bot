@@ -284,7 +284,7 @@ class Bitmap{
     int index = 0;
     long piece_bitboard = 0L;
     // TODO: switch back to normal for loop once all pieces implemented.
-    for (int piece : new int[]{0, 4, 5}){
+    for (int piece : new int[]{2}){
       piece_bitboard = bb.board[bb.color][piece];
 
       // Iterate through the existing piece locations.
@@ -314,7 +314,7 @@ class Bitmap{
         return 0L;
 
       case Player.ROOK:
-        return 0L;
+        return generateRookMoves(bb, pos);
 
       case Player.BISHOP:
         return 0L;
@@ -323,13 +323,49 @@ class Bitmap{
         return knight_xray[pos] & bb.ENEMY_AND_EMPTY_SQUARES;
 
       case Player.PAWN:
-        return generatePawnMoves(bb, piece, pos);
+        return generatePawnMoves(bb, pos);
 
       default: return 0L;
     }
   }
 
-  private long generatePawnMoves(Bitboard bb, int piece, int pos){
+  private long generateRookMoves(Bitboard bb, int pos){
+    long up_moves = up_board[pos] & bb.OCCUPIED_SQUARES;
+    long down_moves = down_board[pos] & bb.OCCUPIED_SQUARES;
+    long left_moves = left_board[pos] & bb.OCCUPIED_SQUARES;
+    long right_moves = right_board[pos] & bb.OCCUPIED_SQUARES;
+    /*
+    The following steps:
+    1. Find the first piece in contact. (done above)
+    2. Shift to that bit.
+    3. Remove overflow by AND.
+    4. XOR find all possible moves.
+    4. Ensure the obstacle piece is non-friendly by AND.
+    */
+    up_moves = ((up_moves << 8) | (up_moves << 16) | (up_moves << 24) |
+                (up_moves << 32) | (up_moves << 40) | (up_moves << 48));
+    up_moves = up_moves & up_board[pos];
+    up_moves = (up_moves ^ up_board[pos]) & bb.ENEMY_AND_EMPTY_SQUARES;
+
+    down_moves = ((down_moves >>> 8) | (down_moves >>> 16) | (down_moves >>> 24) |
+                (down_moves >>> 32) | (down_moves >>> 40) | (down_moves >>> 48));
+    down_moves = down_moves & down_board[pos];
+    down_moves = (down_moves ^ down_board[pos]) & bb.ENEMY_AND_EMPTY_SQUARES;
+
+    left_moves = ((left_moves >>> 1) | (left_moves >>> 2) | (left_moves >>> 3) |
+                (left_moves >>> 6) | (left_moves >>> 5) | (left_moves >>> 6));
+    left_moves = left_moves & left_board[pos];
+    left_moves = (left_moves ^ left_board[pos]) & bb.ENEMY_AND_EMPTY_SQUARES;
+
+    right_moves = ((right_moves << 1) | (right_moves << 2) | (right_moves << 3) |
+                (right_moves << 6) | (right_moves << 5) | (right_moves << 6));
+    right_moves = right_moves & right_board[pos];
+    right_moves = (right_moves ^ right_board[pos]) & bb.ENEMY_AND_EMPTY_SQUARES;
+
+    return up_moves | down_moves | left_moves | right_moves;
+  }
+
+  private long generatePawnMoves(Bitboard bb, int pos){
     if(bb.color == Player.WHITE && pos < 16 && pos > 7){
       if ((pawn_single_xray[Player.WHITE][pos] & bb.EMPTY_SQUARES) > 0){
         return (pawn_single_xray[Player.WHITE][pos] & bb.EMPTY_SQUARES) | (pawn_double_xray[Player.WHITE][pos - 8] & bb.EMPTY_SQUARES) | (pawn_capture_xray[Player.WHITE][pos] & bb.ENEMY_SQUARES);
