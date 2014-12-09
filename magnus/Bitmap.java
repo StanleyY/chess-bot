@@ -13,6 +13,11 @@ class Bitmap{
   public long[] left_board = null;
   public long[] right_board = null;
 
+  public long[] deg45_board = null;
+  public long[] deg135_board = null;
+  public long[] deg225_board = null;
+  public long[] deg315_board = null;
+
   public Bitmap(){
     generateBitmaps();
   }
@@ -23,10 +28,13 @@ class Bitmap{
     this.pawn_single_xray = generatePawnSingleBitmap();
     this.pawn_double_xray = generatePawnDoubleBitmap();
     this.pawn_capture_xray = generatePawnCaptureBitmap();
+
     this.right_board = generateRightBitmap();
     this.left_board = generateLeftBitmap();
     this.up_board = generateUpBitmap();
     this.down_board = generateDownBitmap();
+
+    this.deg45_board = generate45degBitmap();
   }
 
   private long[] generateKingBitmap(){
@@ -268,6 +276,23 @@ class Bitmap{
       output[i] = temp >>> (63 - i);
     }
     return output;
+  }
+
+  private long[] generate45degBitmap(){
+    long[] files = new long[]{0x0101010101010101L, 0x0303030303030303L, 0x0707070707070707L, 0x0F0F0F0F0F0F0F0FL,
+                              0x1F1F1F1F1F1F1F1FL, 0x3F3F3F3F3F3F3F3FL, 0x7F7F7F7F7F7F7F7FL, 0xFFFFFFFFFFFFFFFFL};
+    long[] output = new long[64];
+    long temp = 0x8040201008040200L;
+    for(int i = 0; i < 56; i++){
+      output[i] = (temp << i) & ~files[i % 8];
+    }
+    return output;
+  }
+
+  public long[] generateFileBitmaps(){
+    // [FileA, FileB, FileC, FileD, FileE, FileF, FileG, FileH]
+    return new long[]{0x0101010101010101L, 0x0202020202020202L, 0x0404040404040404L, 0x0808080808080808L,
+                      0x1010101010101010L, 0x2020202020202020L, 0x4040404040404040L, 0x8080808080808080L,};
   }
 
   static int count_set_bits(long n){
