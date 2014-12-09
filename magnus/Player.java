@@ -60,7 +60,7 @@ class Player {
 
     for (int i = 0; i < 64; i++){
       System.out.printf("Position: %d, %s\n", i, translateMove(i));
-      b.printBitboard(bitmap.up_board[i]);
+      b.printBitboard(bitmap.up_board[i] | bitmap.down_board[i] | bitmap.left_board[i] | bitmap.right_board[i]);
     }
   }
 

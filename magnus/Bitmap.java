@@ -26,6 +26,7 @@ class Bitmap{
     this.right_board = generateRightBitmap();
     this.left_board = generateLeftBitmap();
     this.up_board = generateUpBitmap();
+    this.down_board = generateDownBitmap();
   }
 
   private long[] generateKingBitmap(){
@@ -256,6 +257,15 @@ class Bitmap{
     long temp = 0x101010101010100L;
     for(int i = 0; i < 56; i++){
       output[i] = temp << i;
+    }
+    return output;
+  }
+
+  private long[] generateDownBitmap(){
+    long[] output = new long[64];
+    long temp = 0x80808080808080L;
+    for(int i = 63; i > 7; i--){
+      output[i] = temp >>> (63 - i);
     }
     return output;
   }
