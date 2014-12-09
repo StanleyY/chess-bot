@@ -281,8 +281,7 @@ class Bitmap{
 
   private long[] generate45degBitmap(){
     // Bitmap with all the bits to the left on.
-    long[] files = new long[]{0x0101010101010101L, 0x0303030303030303L, 0x0707070707070707L, 0x0F0F0F0F0F0F0F0FL,
-                              0x1F1F1F1F1F1F1F1FL, 0x3F3F3F3F3F3F3F3FL, 0x7F7F7F7F7F7F7F7FL, 0xFFFFFFFFFFFFFFFFL};
+    long[] files = generateLeftFileBitmap();
     long[] output = new long[64];
     long temp = 0x8040201008040200L;
     for(int i = 0; i < 56; i++){
@@ -292,8 +291,7 @@ class Bitmap{
   }
 
   private long[] generate135degBitmap(){
-    long[] files = new long[]{0x0101010101010101L, 0x0303030303030303L, 0x0707070707070707L, 0x0F0F0F0F0F0F0F0FL,
-                              0x1F1F1F1F1F1F1F1FL, 0x3F3F3F3F3F3F3F3FL, 0x7F7F7F7F7F7F7F7FL, 0xFFFFFFFFFFFFFFFFL};
+    long[] files = generateLeftFileBitmap();
     long[] output = new long[64];
     //long temp = 0x8040201008040200L;
     long temp = 1L;
@@ -310,6 +308,11 @@ class Bitmap{
     // [FileA, FileB, FileC, FileD, FileE, FileF, FileG, FileH]
     return new long[]{0x0101010101010101L, 0x0202020202020202L, 0x0404040404040404L, 0x0808080808080808L,
                       0x1010101010101010L, 0x2020202020202020L, 0x4040404040404040L, 0x8080808080808080L,};
+  }
+
+  public long[] generateLeftFileBitmap(){
+    return new long[]{0x0101010101010101L, 0x0303030303030303L, 0x0707070707070707L, 0x0F0F0F0F0F0F0F0FL,
+                      0x1F1F1F1F1F1F1F1FL, 0x3F3F3F3F3F3F3F3FL, 0x7F7F7F7F7F7F7F7FL, 0xFFFFFFFFFFFFFFFFL};
   }
 
   static int count_set_bits(long n){
