@@ -25,6 +25,7 @@ class Bitmap{
     this.pawn_capture_xray = generatePawnCaptureBitmap();
     this.right_board = generateRightBitmap();
     this.left_board = generateLeftBitmap();
+    this.up_board = generateUpBitmap();
   }
 
   private long[] generateKingBitmap(){
@@ -246,6 +247,15 @@ class Bitmap{
         temp = 0L;
         i++;
       }
+    }
+    return output;
+  }
+
+  private long[] generateUpBitmap(){
+    long[] output = new long[64];
+    long temp = 0x101010101010100L;
+    for(int i = 0; i < 56; i++){
+      output[i] = temp << i;
     }
     return output;
   }

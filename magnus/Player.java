@@ -57,14 +57,11 @@ class Player {
       //b.printBitboard(move_list[index].board.OCCUPIED_SQUARES);
       index++;
     }
-    /*
+
     for (int i = 0; i < 64; i++){
       System.out.printf("Position: %d, %s\n", i, translateMove(i));
-      System.out.println("LEFT");
-      b.printBitboard(bitmap.left_board[i]);
-      System.out.println("RIGHT");
-      b.printBitboard(bitmap.right_board[i]);
-    }*/
+      b.printBitboard(bitmap.up_board[i]);
+    }
   }
 
 
