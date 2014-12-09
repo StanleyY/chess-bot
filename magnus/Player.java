@@ -30,16 +30,17 @@ class Player {
     int TEAM_NUMBER = Integer.parseInt(args[1]);
     String TEAM_SECRET = args[2];
     int MY_COLOR = Integer.parseInt(args[3]);
+    int ENEMY_COLOR = -1;
+
+    if (MY_COLOR == WHITE) {ENEMY_COLOR = BLACK;}
+    else {ENEMY_COLOR = WHITE;}
 
     Bitmap bitmap = new Bitmap();
-
-    if (MY_COLOR == WHITE) {int ENEMY_COLOR = BLACK;}
-    else {int ENEMY_COLOR = WHITE;}
 
     System.out.printf("ID: %d, NUM: %d, SECRET: %s\n", GAME_ID, TEAM_NUMBER, TEAM_SECRET);
     //sendGet("http://www.bencarle.com/chess/display/" + GAME_ID);
     Bitboard b = new Bitboard(MY_COLOR);
-    b.generateMoves(bitmap);
+
     b.printPieceBitboards();
     System.out.println("Occupied Board\n");
     b.printBitboard(b.OCCUPIED_SQUARES);
@@ -57,11 +58,11 @@ class Player {
       //b.printBitboard(move_list[index].board.OCCUPIED_SQUARES);
       index++;
     }
-
+    /*
     for (int i = 0; i < 64; i++){
       System.out.printf("Position: %d, %s\n", i, translateMove(i));
       b.printBitboard(bitmap.up_board[i] | bitmap.down_board[i] | bitmap.left_board[i] | bitmap.right_board[i]);
-    }
+    } */
   }
 
 
