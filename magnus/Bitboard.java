@@ -9,24 +9,24 @@ class Bitboard {
   public long knight_moves = 0L;
 
   // Useful boards
-  private static long FULL_BOARD = 0xFFFFFFFFFFFFFFFFL;
+  private long FULL_BOARD = 0xFFFFFFFFFFFFFFFFL;
 
-  public static long ENEMY_SQUARES = 0L;
-  public static long EMPTY_SQUARES = 0L;
-  public static long ENEMY_AND_EMPTY_SQUARES = 0L;
-  public static long OCCUPIED_SQUARES = 0L;
+  public long ENEMY_SQUARES = 0L;
+  public long EMPTY_SQUARES = 0L;
+  public long ENEMY_AND_EMPTY_SQUARES = 0L;
+  public long OCCUPIED_SQUARES = 0L;
 
   public Bitboard(int player_color){
     masks = generateMasks();
-    color = player_color;
-    board = generateNewBoard();
+    this.color = player_color;
+    this.board = generateNewBoard();
     if (color == Player.WHITE) generateUtilBoards(Player.BLACK);
     else generateUtilBoards(Player.WHITE);
   }
 
   public Bitboard(Bitboard old_bb, int piece, int old_pos, int new_pos){
-    color = old_bb.color;
-    board = makeMove(old_bb.board, piece, old_pos, new_pos);
+    this.color = old_bb.color;
+    this.board = makeMove(old_bb.board, piece, old_pos, new_pos);
     if (color == Player.WHITE) generateUtilBoards(Player.BLACK);
     else generateUtilBoards(Player.WHITE);
   }
@@ -70,7 +70,7 @@ class Bitboard {
         output[color][p] = bb[color][p];
       }
     }
-    output[this.color][piece] = (output[this.color][piece] ^ (1L << (old_pos - 1) )) | (1L << (new_pos + 1) );
+    output[this.color][piece] = (output[this.color][piece] ^ (1L << old_pos )) | (1L << new_pos );
     return output;
   }
 
@@ -83,7 +83,7 @@ class Bitboard {
       }
     }
     this.OCCUPIED_SQUARES = temp;
-    this.EMPTY_SQUARES = temp ^ this.FULL_BOARD;
+    this.EMPTY_SQUARES = ~temp;
     temp = 0L;
 
     for (int piece = 0; piece < 6; piece++){
