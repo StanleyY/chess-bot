@@ -4,6 +4,7 @@ class Bitmap{
 
   public long[] king_xray = null;
   public long[] knight_xray = null;
+  public long[][] pawn_xray = null;
 
   public Bitmap(){
     generateBitmaps();
@@ -12,6 +13,7 @@ class Bitmap{
   private void generateBitmaps(){
     this.king_xray = generateKingBitmap();
     this.knight_xray = generateKnightBitmap();
+    this.pawn_xray = generatePawnBitmap();
   }
 
   private long[] generateKingBitmap(){
@@ -158,6 +160,66 @@ class Bitmap{
     output[7] = (1L << 13) | (1L << 22);  // H1
     output[56] = (1L << 41) | (1L << 50); // A8
     output[63] = (1L << 46) | (1L << 53); // H8
+    return output;
+  }
+
+
+  private long[][] generatePawnBitmap(){
+    // Need seperate boards for black and white pawns.
+    long[][] output = new long[2][64];
+    int color = 0;
+    long temp = 0L;
+    long pawn_xray = 0L;
+    // White Pawns
+    for(int i = 9; i < 56; i++){
+      if (i % 8 != 0 && i % 8 != 7) {
+        temp = 1L << i;
+        pawn_xray = 0L;
+        pawn_xray = pawn_xray | (temp << 7) | (temp << 8) | (temp << 9);
+        output[color][i] = pawn_xray;
+      }
+    }
+    for(int i = 8; i < 56; i = i + 8){
+      temp = 1L << i;
+      pawn_xray = 0L;
+      pawn_xray = pawn_xray | (temp << 8) | (temp << 9);
+      output[color][i] = pawn_xray;
+    }
+    for(int i = 15; i < 63; i = i + 8){
+      temp = 1L << i;
+      pawn_xray = 0L;
+      pawn_xray = pawn_xray | (temp << 7) | (temp << 8);
+      output[color][i] = pawn_xray;
+    }
+    for(int i = 8; i < 16; i++){
+      output[color][i] = output[color][i] | (1L << (24 + (i - 8)));
+    }
+    //Black Pawns
+    color = 1;
+    for(int i = 55; i > 8; i--){
+      if (i % 8 != 0 && i % 8 != 7) {
+        temp = 1L << i;
+        pawn_xray = 0L;
+        pawn_xray = pawn_xray | (temp >>> 7) | (temp >>> 8) | (temp >>> 9);
+        output[color][i] = pawn_xray;
+      }
+    }
+    for(int i = 8; i < 56; i = i + 8){
+      temp = 1L << i;
+      pawn_xray = 0L;
+      pawn_xray = pawn_xray | (temp >>> 7) | (temp >>> 8);
+      output[color][i] = pawn_xray;
+    }
+    for(int i = 15; i < 63; i = i + 8){
+      temp = 1L << i;
+      pawn_xray = 0L;
+      pawn_xray = pawn_xray | (temp >>> 8) | (temp >>> 9);
+      output[color][i] = pawn_xray;
+    }
+    for(int i = 48; i < 56; i++){
+      output[color][i] = output[color][i] | (1L << (i - 16));
+    }
+
     return output;
   }
 

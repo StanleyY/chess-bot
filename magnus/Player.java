@@ -55,8 +55,8 @@ class Player {
     }
     /*
     for (int i = 0; i < 64; i++){
-      System.out.println("Position: " + i);
-      b.printBitboard(bitmap.knight_xray[i]);
+      System.out.printf("Position: %d, %s\n", i, translateMove(i));
+      b.printBitboard(bitmap.pawn_xray[0][i]);
     }*/
   }
 
