@@ -56,7 +56,10 @@ class Player {
     /*
     for (int i = 0; i < 64; i++){
       System.out.printf("Position: %d, %s\n", i, translateMove(i));
-      b.printBitboard(bitmap.pawn_xray[0][i]);
+      System.out.println("White");
+      b.printBitboard(bitmap.pawn_capture_xray[0][i]);
+      System.out.println("Black");
+      b.printBitboard(bitmap.pawn_capture_xray[1][i]);
     }*/
   }
 
