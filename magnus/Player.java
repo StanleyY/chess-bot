@@ -19,7 +19,7 @@ class Player {
   public static final int PAWN = 5;
 
   public static final char[] FILE_NAME = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
-  public static final String[] PIECE_NAME = new String[]{"King", "Queen", "Rook", "Bishop", "Knight", "Pawn"};
+  public static final String[] PIECE_NAME = new String[]{"K", "Q", "R", "B", "N", "P"};
 
   public static void main(String[] args) throws Exception{
     if (args.length < 4) {
