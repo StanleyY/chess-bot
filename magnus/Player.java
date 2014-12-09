@@ -43,10 +43,11 @@ class Player {
     b.printBitboard(b.ENEMY_SQUARES);
     System.out.println("\nPossible King Moves\n");
     b.printBitboard(b.king_moves);
+    /*
     for (int i = 0; i < 64; i++){
-      System.out.println("King Position: " + i);
-      b.printBitboard(bitmap.king_xray[i]);
-    }
+      System.out.println("Position: " + i);
+      b.printBitboard(bitmap.knight_xray[i]);
+    }*/
   }
 
   static String sendGet(String url) throws Exception {

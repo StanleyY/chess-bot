@@ -6,6 +6,7 @@ class Bitboard {
   public long[][] board = null;
   public int color = -1;
   public long king_moves = 0L;
+  public long knight_moves = 0L;
 
   // Useful boards
   private static long FULL_BOARD = 0xFFFFFFFFFFFFFFFFL;
