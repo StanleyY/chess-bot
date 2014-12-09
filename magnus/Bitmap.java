@@ -232,23 +232,25 @@ class Bitmap{
     return count;
   }
 
-  public Move[] generateMoves(Bitboard b){
+  public Move[] generateMoves(Bitboard bb){
     Move[] output = new Move[500];
     int index = 0;
-    for (int piece = 0; piece < 6; piece = piece + 4){
-      long piece_bitboard = b.board[b.color][piece];
+    long piece_bitboard = 0L;
+    // TODO: switch back to normal for loop once all pieces implemented.
+    for (int piece : new int[]{0, 4, 5}){
+      piece_bitboard = bb.board[bb.color][piece];
 
       // Iterate through the existing piece locations.
       while(piece_bitboard > 0){
         int old_pos = Long.numberOfTrailingZeros(piece_bitboard);
         piece_bitboard = piece_bitboard ^ (1L << (old_pos) ); // Turning off rightmost bit.
 
-        long possible_moves = generatePieceMoves(b, piece, old_pos);
+        long possible_moves = generatePieceMoves(bb, piece, old_pos);
         // Iterate through the current piece's possible moves.
         while(possible_moves > 0){
           int new_pos = Long.numberOfTrailingZeros(possible_moves);
           possible_moves = possible_moves ^ (1L << (new_pos) ); // Turning off rightmost bit.
-          output[index] = new Move(new Bitboard(b, piece, old_pos, new_pos) , piece, old_pos, new_pos);
+          output[index] = new Move(new Bitboard(bb, piece, old_pos, new_pos) , piece, old_pos, new_pos);
           index++;
         }
       }
@@ -256,22 +258,44 @@ class Bitmap{
     return output;
   }
 
-  public long generatePieceMoves(Bitboard b, int piece, int pos){
+  public long generatePieceMoves(Bitboard bb, int piece, int pos){
     switch (piece) {
       case Player.KING:
-        return king_xray[pos] & b.ENEMY_AND_EMPTY_SQUARES;
+        return king_xray[pos] & bb.ENEMY_AND_EMPTY_SQUARES;
+
       case Player.QUEEN:
         return 0L;
+
       case Player.ROOK:
         return 0L;
+
       case Player.BISHOP:
         return 0L;
+
       case Player.KNIGHT:
-        return knight_xray[pos] & b.ENEMY_AND_EMPTY_SQUARES;
+        return knight_xray[pos] & bb.ENEMY_AND_EMPTY_SQUARES;
+
       case Player.PAWN:
-        return 0L;
+        return generatePawnMoves(bb, piece, pos);
+
       default: return 0L;
     }
+  }
+
+  private long generatePawnMoves(Bitboard bb, int piece, int pos){
+    if(bb.color == Player.WHITE && pos < 16 && pos > 7){
+      if ((pawn_single_xray[Player.WHITE][pos] & bb.EMPTY_SQUARES) > 0){
+        return (pawn_single_xray[Player.WHITE][pos] & bb.EMPTY_SQUARES) | (pawn_double_xray[Player.WHITE][pos - 8] & bb.EMPTY_SQUARES) | (pawn_capture_xray[Player.WHITE][pos] & bb.ENEMY_SQUARES);
+      }
+      else return (pawn_capture_xray[Player.WHITE][pos] & bb.ENEMY_SQUARES);
+    }
+    else if (bb.color == Player.BLACK && pos > 47 && pos < 56) {
+      if ((pawn_single_xray[Player.BLACK][pos] & bb.EMPTY_SQUARES) > 0){
+        return ((pawn_single_xray[Player.BLACK][pos] & bb.EMPTY_SQUARES) | (pawn_double_xray[Player.BLACK][pos - 48] & bb.EMPTY_SQUARES) | (pawn_capture_xray[Player.BLACK][pos] & bb.ENEMY_SQUARES));
+      }
+      else return (pawn_capture_xray[Player.BLACK][pos] & bb.ENEMY_SQUARES);
+    }
+    return (pawn_single_xray[bb.color][pos] & bb.EMPTY_SQUARES) | (pawn_capture_xray[bb.color][pos] & bb.ENEMY_SQUARES);
   }
 
 }

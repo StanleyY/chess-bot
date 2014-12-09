@@ -45,21 +45,31 @@ class Player {
     b.printBitboard(b.OCCUPIED_SQUARES);
     System.out.println("\nEnemy Board\n");
     b.printBitboard(b.ENEMY_SQUARES);
+    System.out.println("\nEmpty Board\n");
+    b.printBitboard(b.EMPTY_SQUARES);
 
     Move[] move_list = bitmap.generateMoves(b);
+
     int index = 0;
-    System.out.println("List of Moves");
+    System.out.println("List of Moves:");
     while(move_list[index] != null){
       System.out.printf("Piece: %s, Original: %s, New: %s\n", PIECE_NAME[move_list[index].piece], translateMove(move_list[index].old_pos), translateMove(move_list[index].new_pos));
+      //b.printBitboard(move_list[index].board.OCCUPIED_SQUARES);
       index++;
     }
     /*
     for (int i = 0; i < 64; i++){
       System.out.printf("Position: %d, %s\n", i, translateMove(i));
       System.out.println("White");
-      b.printBitboard(bitmap.pawn_capture_xray[0][i]);
+      if (i < 16 && i > 7) {
+        b.printBitboard(bitmap.pawn_single_xray[0][i] | bitmap.pawn_double_xray[0][i - 8] | bitmap.pawn_capture_xray[0][i]);
+      }
+      else b.printBitboard(bitmap.pawn_single_xray[0][i] | bitmap.pawn_capture_xray[0][i]);
       System.out.println("Black");
-      b.printBitboard(bitmap.pawn_capture_xray[1][i]);
+      if (i > 47 && i < 56) {
+        b.printBitboard(bitmap.pawn_single_xray[1][i] | bitmap.pawn_double_xray[1][i - 48] | bitmap.pawn_capture_xray[1][i]);
+      }
+      else b.printBitboard(bitmap.pawn_single_xray[1][i] | bitmap.pawn_capture_xray[1][i]);
     }*/
   }
 
