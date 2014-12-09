@@ -75,7 +75,7 @@ class Bitboard {
   }
 
 
-  private void generateUtilBoards(int enemy_color){
+  public void generateUtilBoards(int enemy_color){
     long temp = 0L;
     for (int color = 0; color < 2; color++){
       for(int piece = 0; piece < 6; piece++){
@@ -94,11 +94,6 @@ class Bitboard {
     this.ENEMY_AND_EMPTY_SQUARES = this.EMPTY_SQUARES | temp;
   }
 
-
-  public void generateMoves(Bitmap b){
-    int index = Long.numberOfTrailingZeros(this.board[this.color][Player.KING]);
-    this.king_moves = b.king_xray[index] & (ENEMY_AND_EMPTY_SQUARES);
-  }
 
   public void printBitboard(long board){
     String line = "";
