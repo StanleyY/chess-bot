@@ -24,6 +24,7 @@ class Bitmap{
     this.pawn_double_xray = generatePawnDoubleBitmap();
     this.pawn_capture_xray = generatePawnCaptureBitmap();
     this.right_board = generateRightBitmap();
+    this.left_board = generateLeftBitmap();
   }
 
   private long[] generateKingBitmap(){
@@ -230,6 +231,20 @@ class Bitmap{
       output[i] = temp;
       if(i % 8 == 7){
         temp = 0x00000000000000FFL << (i + 1);
+      }
+    }
+    return output;
+  }
+
+  private long[] generateLeftBitmap(){
+    long[] output = new long[64];
+    long temp = 0L;
+    for(int i = 1; i < 64; i++){
+      temp = temp ^ (1L << (i - 1));
+      output[i] = temp;
+      if(i % 8 == 7){
+        temp = 0L;
+        i++;
       }
     }
     return output;
