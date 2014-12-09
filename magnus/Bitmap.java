@@ -35,6 +35,7 @@ class Bitmap{
     this.down_board = generateDownBitmap();
 
     this.deg45_board = generate45degBitmap();
+    this.deg135_board = generate135degBitmap();
   }
 
   private long[] generateKingBitmap(){
@@ -279,6 +280,7 @@ class Bitmap{
   }
 
   private long[] generate45degBitmap(){
+    // Bitmap with all the bits to the left on.
     long[] files = new long[]{0x0101010101010101L, 0x0303030303030303L, 0x0707070707070707L, 0x0F0F0F0F0F0F0F0FL,
                               0x1F1F1F1F1F1F1F1FL, 0x3F3F3F3F3F3F3F3FL, 0x7F7F7F7F7F7F7F7FL, 0xFFFFFFFFFFFFFFFFL};
     long[] output = new long[64];
@@ -288,6 +290,21 @@ class Bitmap{
     }
     return output;
   }
+
+  private long[] generate135degBitmap(){
+    long[] files = new long[]{0x0101010101010101L, 0x0303030303030303L, 0x0707070707070707L, 0x0F0F0F0F0F0F0F0FL,
+                              0x1F1F1F1F1F1F1F1FL, 0x3F3F3F3F3F3F3F3FL, 0x7F7F7F7F7F7F7F7FL, 0xFFFFFFFFFFFFFFFFL};
+    long[] output = new long[64];
+    //long temp = 0x8040201008040200L;
+    long temp = 1L;
+    for(int i = 8; i < 63; i++){
+      temp = temp << 1;
+      if (i % 8 == 0) temp = temp | (temp >>> 7);
+      output[i] = temp & ~files[i % 8];
+    }
+    return output;
+  }
+
 
   public long[] generateFileBitmaps(){
     // [FileA, FileB, FileC, FileD, FileE, FileF, FileG, FileH]
