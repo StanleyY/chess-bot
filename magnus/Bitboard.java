@@ -102,6 +102,7 @@ class Bitboard {
 
   public void printBitboard(long board){
     String line = "";
+    int rank = 8;
     for(int i = 7; i > -1; i--){
       for(int j = 0; j < 8; j++) {
         if( ((1L << ((i * 8) + j)) & board) == 0){
@@ -111,9 +112,11 @@ class Bitboard {
           line = line + "X";
         }
       }
-      System.out.println(line);
+      System.out.println(rank + line);
+      rank--;
       line = "";
     }
+    System.out.println(" ABCDEFGH\n");
   }
 
   public void printPieceBitboards(){
