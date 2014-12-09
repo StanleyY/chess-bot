@@ -8,6 +8,11 @@ class Bitmap{
   public long[][] pawn_double_xray = null;
   public long[][] pawn_capture_xray = null;
 
+  public long[] up_board = null;
+  public long[] down_board = null;
+  public long[] left_board = null;
+  public long[] right_board = null;
+
   public Bitmap(){
     generateBitmaps();
   }
@@ -18,6 +23,7 @@ class Bitmap{
     this.pawn_single_xray = generatePawnSingleBitmap();
     this.pawn_double_xray = generatePawnDoubleBitmap();
     this.pawn_capture_xray = generatePawnCaptureBitmap();
+    this.right_board = generateRightBitmap();
   }
 
   private long[] generateKingBitmap(){
@@ -189,13 +195,6 @@ class Bitmap{
       output[Player.WHITE][i] = (1L << (24 + i));
       output[Player.BLACK][i] = (1L << (32 + i));
     }
-        /*
-    for(int i = 8; i < 16; i++){
-      output[color][i] = output[color][i] | (1L << (24 + (i - 8)));
-    }
-    for(int i = 48; i < 56; i++){
-      output[color][i] = output[color][i] | (1L << (i - 16));
-    }*/
     return output;
   }
 
@@ -219,6 +218,19 @@ class Bitmap{
       temp = 1L << i;
       output[Player.WHITE][i] = (temp << 7);
       output[Player.BLACK][i] = (temp >>> 9);
+    }
+    return output;
+  }
+
+  private long[] generateRightBitmap(){
+    long[] output = new long[64];
+    long temp = 0x00000000000000FFL;
+    for(int i = 0; i < 64; i++){
+      temp = temp ^ (1L << i);
+      output[i] = temp;
+      if(i % 8 == 7){
+        temp = 0x00000000000000FFL << (i + 1);
+      }
     }
     return output;
   }
@@ -249,7 +261,7 @@ class Bitmap{
         // Iterate through the current piece's possible moves.
         while(possible_moves > 0){
           int new_pos = Long.numberOfTrailingZeros(possible_moves);
-          possible_moves = possible_moves ^ (1L << (new_pos) ); // Turning off rightmost bit.
+          possible_moves = possible_moves ^ (1L << (new_pos)); // Turning off rightmost bit.
           output[index] = new Move(new Bitboard(bb, piece, old_pos, new_pos) , piece, old_pos, new_pos);
           index++;
         }

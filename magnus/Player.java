@@ -57,20 +57,11 @@ class Player {
       //b.printBitboard(move_list[index].board.OCCUPIED_SQUARES);
       index++;
     }
-    /*
+
     for (int i = 0; i < 64; i++){
       System.out.printf("Position: %d, %s\n", i, translateMove(i));
-      System.out.println("White");
-      if (i < 16 && i > 7) {
-        b.printBitboard(bitmap.pawn_single_xray[0][i] | bitmap.pawn_double_xray[0][i - 8] | bitmap.pawn_capture_xray[0][i]);
-      }
-      else b.printBitboard(bitmap.pawn_single_xray[0][i] | bitmap.pawn_capture_xray[0][i]);
-      System.out.println("Black");
-      if (i > 47 && i < 56) {
-        b.printBitboard(bitmap.pawn_single_xray[1][i] | bitmap.pawn_double_xray[1][i - 48] | bitmap.pawn_capture_xray[1][i]);
-      }
-      else b.printBitboard(bitmap.pawn_single_xray[1][i] | bitmap.pawn_capture_xray[1][i]);
-    }*/
+      b.printBitboard(bitmap.right_board[i]);
+    }
   }
 
 
