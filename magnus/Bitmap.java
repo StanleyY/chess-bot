@@ -161,4 +161,55 @@ class Bitmap{
     return output;
   }
 
+  static int count_set_bits(long n){
+    int count = 0; // count accumulates the total bits set
+    while(n != 0){
+        n &= (n-1); // clear the least significant bit set
+        count++;
+    }
+    return count;
+  }
+
+  public Move[] generateMoves(Bitboard b){
+    Move[] output = new Move[500];
+    int index = 0;
+    for (int piece = 0; piece < 6; piece = piece + 4){
+      long piece_bitboard = b.board[b.color][piece];
+
+      // Iterate through the existing piece locations.
+      while(piece_bitboard > 0){
+        int old_pos = Long.numberOfTrailingZeros(piece_bitboard);
+        piece_bitboard = piece_bitboard ^ (1L << (old_pos) ); // Turning off rightmost bit.
+
+        long possible_moves = generatePieceMoves(b, piece, old_pos);
+        // Iterate through the current piece's possible moves.
+        while(possible_moves > 0){
+          int new_pos = Long.numberOfTrailingZeros(possible_moves);
+          possible_moves = possible_moves ^ (1L << (new_pos) ); // Turning off rightmost bit.
+          output[index] = new Move(new Bitboard(b, piece, old_pos, new_pos) , piece, old_pos, new_pos);
+          index++;
+        }
+      }
+    }
+    return output;
+  }
+
+  public long generatePieceMoves(Bitboard b, int piece, int pos){
+    switch (piece) {
+      case Player.KING:
+        return king_xray[pos] & b.ENEMY_AND_EMPTY_SQUARES;
+      case Player.QUEEN:
+        return 0L;
+      case Player.ROOK:
+        return 0L;
+      case Player.BISHOP:
+        return 0L;
+      case Player.KNIGHT:
+        return knight_xray[pos] & b.ENEMY_AND_EMPTY_SQUARES;
+      case Player.PAWN:
+        return 0L;
+      default: return 0L;
+    }
+  }
+
 }

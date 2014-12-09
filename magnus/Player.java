@@ -10,12 +10,16 @@ class Player {
 
   public static final int WHITE = 0;
   public static final int BLACK = 1;
+
   public static final int KING = 0;
   public static final int QUEEN = 1;
   public static final int ROOK = 2;
   public static final int BISHOP = 3;
   public static final int KNIGHT = 4;
   public static final int PAWN = 5;
+
+  public static final char[] FILE_NAME = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
+  public static final String[] PIECE_NAME = new String[]{"King", "Queen", "Rook", "Bishop", "Knight", "Pawn"};
 
   public static void main(String[] args) throws Exception{
     if (args.length < 4) {
@@ -41,14 +45,26 @@ class Player {
     b.printBitboard(b.OCCUPIED_SQUARES);
     System.out.println("\nEnemy Board\n");
     b.printBitboard(b.ENEMY_SQUARES);
-    System.out.println("\nPossible King Moves\n");
-    b.printBitboard(b.king_moves);
+
+    Move[] move_list = bitmap.generateMoves(b);
+    int index = 0;
+    System.out.println("List of Moves");
+    while(move_list[index] != null){
+      System.out.printf("Piece: %s, Original: %s, New: %s\n", PIECE_NAME[move_list[index].piece], translateMove(move_list[index].old_pos), translateMove(move_list[index].new_pos));
+      index++;
+    }
     /*
     for (int i = 0; i < 64; i++){
       System.out.println("Position: " + i);
       b.printBitboard(bitmap.knight_xray[i]);
     }*/
   }
+
+
+  public static String translateMove(int move){
+    return  FILE_NAME[move % 8] + "" + ((move / 8) + 1);
+  }
+
 
   static String sendGet(String url) throws Exception {
     URL obj = new URL(url);
