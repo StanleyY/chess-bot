@@ -294,11 +294,10 @@ class Bitmap{
   private long[] generate135degBitmap(){
     long[] files = generateLeftFileBitmap();
     long[] output = new long[64];
-    long temp = 1L;
-    for(int i = 8; i < 63; i++){
+    long temp = 0x0002040810204080L;
+    for(int i = 0; i < 56; i++){
+      output[i] = temp & files[i % 8];
       temp = temp << 1;
-      if (i % 8 == 0) temp = temp | (temp >>> 7);
-      output[i] = temp & ~files[i % 8];
     }
     return output;
   }
@@ -317,10 +316,11 @@ class Bitmap{
   private long[] generate315degBitmap(){
     long[] files = generateLeftFileBitmap();
     long[] output = new long[64];
-    long temp = 0x0002040810204080L;
-    for(int i = 0; i < 56; i++){
-      output[i] = temp & files[i % 8];
+    long temp = 1L;
+    for(int i = 8; i < 63; i++){
       temp = temp << 1;
+      if (i % 8 == 0) temp = temp | (temp >>> 7);
+      output[i] = temp & ~files[i % 8];
     }
     return output;
   }
@@ -350,7 +350,7 @@ class Bitmap{
     int index = 0;
     long piece_bitboard = 0L;
     // TODO: switch back to normal for loop once all pieces implemented.
-    for (int piece : new int[]{2}){
+    for (int piece : new int[]{3}){
       piece_bitboard = bb.board[bb.color][piece];
 
       // Iterate through the existing piece locations.
@@ -383,7 +383,7 @@ class Bitmap{
         return generateRookMoves(bb, pos);
 
       case Player.BISHOP:
-        return 0L;
+        return generateBishopMoves(bb, pos);
 
       case Player.KNIGHT:
         return knight_xray[pos] & bb.ENEMY_AND_EMPTY_SQUARES;
@@ -429,6 +429,42 @@ class Bitmap{
     right_moves = (right_moves ^ right_board[pos]) & bb.ENEMY_AND_EMPTY_SQUARES;
 
     return up_moves | down_moves | left_moves | right_moves;
+  }
+
+  private long generateBishopMoves(Bitboard bb, int pos){
+    long deg45_moves = deg45_board[pos] & bb.OCCUPIED_SQUARES;
+    long deg135_moves = deg135_board[pos] & bb.OCCUPIED_SQUARES;
+    long deg225_moves = deg225_board[pos] & bb.OCCUPIED_SQUARES;
+    long deg315_moves = deg315_board[pos] & bb.OCCUPIED_SQUARES;
+    /*
+    The following steps:
+    1. Find the first piece in contact. (done above)
+    2. Shift to that bit.
+    3. Remove overflow by AND.
+    4. XOR find all possible moves.
+    4. Ensure the obstacle piece is non-friendly by AND.
+    */
+    deg45_moves = ((deg45_moves << 9) | (deg45_moves << 18) | (deg45_moves << 27) |
+                (deg45_moves << 36) | (deg45_moves << 45) | (deg45_moves << 54));
+    deg45_moves = deg45_moves & deg45_board[pos];
+    deg45_moves = (deg45_moves ^ deg45_board[pos]) & bb.ENEMY_AND_EMPTY_SQUARES;
+
+    deg135_moves = ((deg135_moves << 7) | (deg135_moves << 14) | (deg135_moves << 21) |
+                (deg135_moves << 28) | (deg135_moves << 35) | (deg135_moves << 42));
+    deg135_moves = deg135_moves & deg135_board[pos];
+    deg135_moves = (deg135_moves ^ deg135_board[pos]) & bb.ENEMY_AND_EMPTY_SQUARES;
+
+    deg225_moves = ((deg225_moves >>> 9) | (deg225_moves >>> 18) | (deg225_moves >>> 27) |
+                (deg225_moves >>> 36) | (deg225_moves >>> 45) | (deg225_moves >>> 54));
+    deg225_moves = deg225_moves & deg225_board[pos];
+    deg225_moves = (deg225_moves ^ deg225_board[pos]) & bb.ENEMY_AND_EMPTY_SQUARES;
+
+    deg315_moves = ((deg315_moves >>> 7) | (deg315_moves >>> 14) | (deg315_moves >>> 21) |
+                (deg315_moves >>> 28) | (deg315_moves >>> 35) | (deg315_moves >>> 42));
+    deg315_moves = deg315_moves & deg315_board[pos];
+    deg315_moves = (deg315_moves ^ deg315_board[pos]) & bb.ENEMY_AND_EMPTY_SQUARES;
+
+    return deg45_moves | deg135_moves | deg225_moves | deg315_moves;
   }
 
   private long generatePawnMoves(Bitboard bb, int pos){

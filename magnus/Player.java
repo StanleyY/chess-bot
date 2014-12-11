@@ -40,7 +40,6 @@ class Player {
     System.out.printf("ID: %d, NUM: %d, SECRET: %s\n", GAME_ID, TEAM_NUMBER, TEAM_SECRET);
     //sendGet("http://www.bencarle.com/chess/display/" + GAME_ID);
     Bitboard b = new Bitboard(MY_COLOR);
-
     b.printPieceBitboards();
     System.out.println("Occupied Board\n");
     b.printBitboard(b.OCCUPIED_SQUARES);
@@ -58,11 +57,11 @@ class Player {
       //b.printBitboard(move_list[index].board.OCCUPIED_SQUARES);
       index++;
     }
-
+/*
     for (int i = 0; i < 64; i++){
       System.out.printf("Position: %d, %s\n", i, translateMove(i));
       b.printBitboard(bitmap.deg45_board[i] | bitmap.deg135_board[i] | bitmap.deg225_board[i] | bitmap.deg315_board[i]);
-    }
+    }*/
   }
 
 
