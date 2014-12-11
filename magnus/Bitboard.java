@@ -70,7 +70,16 @@ class Bitboard {
         output[color][p] = bb[color][p];
       }
     }
-    output[piece_color][piece] = (output[piece_color][piece] ^ (1L << old_pos )) | (1L << new_pos );
+    long ending_pos = (1L << new_pos );
+    output[piece_color][piece] = (output[piece_color][piece] ^ (1L << old_pos )) | ending_pos;
+    piece_color = piece_color ^ 1; // Convert to other color.
+    // Checking for captures
+    for(int p = 0; p < 6; p++){
+      if ((ending_pos & output[piece_color][p]) > 0) {
+        System.out.printf("\n\n#######CAPTURED PIECE: %d, at %d#########\n", p, new_pos);
+        output[piece_color][p] = output[piece_color][p] ^ ending_pos;
+      }
+    }
     return output;
   }
 
