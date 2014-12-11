@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 class Player {
 
@@ -18,8 +19,8 @@ class Player {
   public static final int KNIGHT = 4;
   public static final int PAWN = 5;
 
-  public static final char[] FILE_NAME = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
-  public static final String[] PIECE_NAME = new String[]{"K", "Q", "R", "B", "N", "P"};
+  public static final ArrayList<Character> FILE_NAME = new ArrayList<Character>(8);
+  public static final ArrayList<Character> PIECE_NAME = new ArrayList<Character>(6);
 
   public static void main(String[] args) throws Exception{
     if (args.length < 4) {
@@ -31,6 +32,12 @@ class Player {
     String TEAM_SECRET = args[2];
     int MY_COLOR = Integer.parseInt(args[3]);
     int ENEMY_COLOR = -1;
+    for(char c: "ABCDEFGH".toCharArray()){
+      FILE_NAME.add(c);
+    }
+    for(char c: "KQRBNP".toCharArray()){
+      PIECE_NAME.add(c);
+    }
 
     if (MY_COLOR == WHITE) {ENEMY_COLOR = BLACK;}
     else {ENEMY_COLOR = WHITE;}
@@ -53,7 +60,7 @@ class Player {
     int index = 0;
     System.out.println("List of Moves:");
     while(move_list[index] != null){
-      System.out.printf("Piece: %s, Original: %s, New: %s\n", PIECE_NAME[move_list[index].piece], translateMove(move_list[index].old_pos), translateMove(move_list[index].new_pos));
+      System.out.printf("Piece: %s, Original: %s, New: %s\n", PIECE_NAME.get(move_list[index].piece), translateMove(move_list[index].old_pos), translateMove(move_list[index].new_pos));
       //b.printBitboard(move_list[index].board.OCCUPIED_SQUARES);
       index++;
     }
@@ -66,9 +73,8 @@ class Player {
 
 
   public static String translateMove(int move){
-    return  FILE_NAME[move % 8] + "" + ((move / 8) + 1);
+    return  FILE_NAME.get(move % 8) + "" + ((move / 8) + 1);
   }
-
 
   static String sendGet(String url) throws Exception {
     URL obj = new URL(url);
