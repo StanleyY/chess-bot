@@ -37,6 +37,7 @@ class Bitmap{
     this.deg45_board = generate45degBitmap();
     this.deg135_board = generate135degBitmap();
     this.deg225_board = generate225degBitmap();
+    this.deg315_board = generate315degBitmap();
   }
 
   private long[] generateKingBitmap(){
@@ -309,6 +310,17 @@ class Bitmap{
     for(int i = 63; i > 7; i--){
       output[i] = temp & files[i % 8];
       temp = temp >>> 1;
+    }
+    return output;
+  }
+
+  private long[] generate315degBitmap(){
+    long[] files = generateLeftFileBitmap();
+    long[] output = new long[64];
+    long temp = 0x0002040810204080L;
+    for(int i = 0; i < 56; i++){
+      output[i] = temp & files[i % 8];
+      temp = temp << 1;
     }
     return output;
   }
