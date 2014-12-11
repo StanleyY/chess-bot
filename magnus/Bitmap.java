@@ -350,7 +350,7 @@ class Bitmap{
     int index = 0;
     long piece_bitboard = 0L;
     // TODO: switch back to normal for loop once all pieces implemented.
-    for (int piece : new int[]{3}){
+    for (int piece = 0; piece < 6; piece++){
       piece_bitboard = bb.board[bb.color][piece];
 
       // Iterate through the existing piece locations.
@@ -377,7 +377,7 @@ class Bitmap{
         return king_xray[pos] & bb.ENEMY_AND_EMPTY_SQUARES;
 
       case Player.QUEEN:
-        return 0L;
+        return generateRookMoves(bb, pos) | generateBishopMoves(bb, pos);
 
       case Player.ROOK:
         return generateRookMoves(bb, pos);
