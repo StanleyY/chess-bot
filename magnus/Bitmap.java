@@ -363,7 +363,7 @@ class Bitmap{
         while(possible_moves > 0){
           int new_pos = Long.numberOfTrailingZeros(possible_moves);
           possible_moves = possible_moves ^ (1L << (new_pos)); // Turning off rightmost bit.
-          output[index] = new Move(new Bitboard(bb, piece, old_pos, new_pos) , piece, old_pos, new_pos);
+          output[index] = new Move(new Bitboard(bb, bb.color, piece, old_pos, new_pos) , piece, old_pos, new_pos);
           index++;
         }
       }

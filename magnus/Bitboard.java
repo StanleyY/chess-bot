@@ -24,9 +24,9 @@ class Bitboard {
     else generateUtilBoards(Player.WHITE);
   }
 
-  public Bitboard(Bitboard old_bb, int piece, int old_pos, int new_pos){
+  public Bitboard(Bitboard old_bb, int piece_color, int piece, int old_pos, int new_pos){
     this.color = old_bb.color;
-    this.board = makeMove(old_bb.board, piece, old_pos, new_pos);
+    this.board = makeMove(old_bb.board, piece_color, piece, old_pos, new_pos);
     if (color == Player.WHITE) generateUtilBoards(Player.BLACK);
     else generateUtilBoards(Player.WHITE);
   }
@@ -62,7 +62,7 @@ class Bitboard {
   }
 
 
-  private long[][] makeMove(long[][] bb, int piece, int old_pos, int new_pos){
+  private long[][] makeMove(long[][] bb, int piece_color, int piece, int old_pos, int new_pos){
     long[][] output = new long[2][6];
     // Cloning bitboards
     for (int color = 0; color < 2; color++){
@@ -70,7 +70,7 @@ class Bitboard {
         output[color][p] = bb[color][p];
       }
     }
-    output[this.color][piece] = (output[this.color][piece] ^ (1L << old_pos )) | (1L << new_pos );
+    output[piece_color][piece] = (output[piece_color][piece] ^ (1L << old_pos )) | (1L << new_pos );
     return output;
   }
 
