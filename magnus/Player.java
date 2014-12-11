@@ -61,7 +61,7 @@ class Player {
 
     for (int i = 0; i < 64; i++){
       System.out.printf("Position: %d, %s\n", i, translateMove(i));
-      b.printBitboard(bitmap.deg135_board[i]);
+      b.printBitboard(bitmap.deg225_board[i]);
     }
   }
 
