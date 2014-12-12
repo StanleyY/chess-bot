@@ -2,13 +2,12 @@ package magnus;
 
 class Bitboard {
 
-  public long[] masks = null;
   public long[][] board = null;
   public int color = -1;
   public long king_moves = 0L;
   public long knight_moves = 0L;
 
-  // Useful boards
+  // Useful utility boards
   private long FULL_BOARD = 0xFFFFFFFFFFFFFFFFL;
 
   public long ENEMY_SQUARES = 0L;
@@ -17,7 +16,6 @@ class Bitboard {
   public long OCCUPIED_SQUARES = 0L;
 
   public Bitboard(int player_color){
-    masks = generateMasks();
     this.color = player_color;
     this.board = generateNewBoard();
     if (color == Player.WHITE) generateUtilBoards(Player.BLACK);
@@ -36,14 +34,6 @@ class Bitboard {
     this.board = makeMovePromotion(old_bb.board, piece_color, piece, new_piece, old_pos, new_pos);
     if (color == Player.WHITE) generateUtilBoards(Player.BLACK);
     else generateUtilBoards(Player.WHITE);
-  }
-
-  private long[] generateMasks(){
-    long[] output = new long[64];
-    for (int i = 0; i < output.length; i++){
-      output[i] = 1L << i;
-    }
-    return output;
   }
 
 
