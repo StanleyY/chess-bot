@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.Stack;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
@@ -24,6 +26,15 @@ class Player {
   public static final int BISHOP = 3;
   public static final int KNIGHT = 4;
   public static final int PAWN = 5;
+
+  public static final int RANK_1 = 0;
+  public static final int RANK_2 = 1;
+  public static final int RANK_3 = 2;
+  public static final int RANK_4 = 3;
+  public static final int RANK_5 = 4;
+  public static final int RANK_6 = 5;
+  public static final int RANK_7 = 6;
+  public static final int RANK_8 = 7;
 
   public static final ArrayList<Character> FILE_NAME = new ArrayList<Character>(8);
   public static final ArrayList<Character> PIECE_NAME = new ArrayList<Character>(6);
@@ -94,7 +105,7 @@ class Player {
         System.out.println("$$$$$$$$$$$$$$$$$$");
         }
 
-        Move[] move_list = bitmap.generateMoves(b);
+        Stack<Move> move_list = bitmap.generateMoves(b);
         b = sendMove(move_list);
         System.out.println("\n#########AFTER MOVE NUM: #########" + move_num);
         b.printBitboard(b.OCCUPIED_SQUARES);
@@ -153,17 +164,20 @@ class Player {
     return null;
   }
 
-  public static Bitboard sendMove(Move[] move_list){
-    int index = 0;
-    String URL = MOVE_URL + PIECE_NAME.get(move_list[index].piece) + translateMove(move_list[index].old_pos) + translateMove(move_list[index].new_pos);
+  public static Bitboard sendMove(Stack<Move> move_list){
+    Random rand = new Random();
+    int randomNum = rand.nextInt((move_list.size() - 3) + 1);
+    while(randomNum-- > 0) move_list.pop();
+    Move move = move_list.pop();
+    String URL = MOVE_URL + PIECE_NAME.get(move.piece) + translateMove(move.old_pos) + translateMove(move.new_pos);
     String response = sendGet(URL);
     while(response.indexOf("false") > -1){
       System.out.println("INVALID MOVE: " + URL);
       System.out.println("ERROR RESPONSE: " + response);
-      index++;
-      URL = MOVE_URL + PIECE_NAME.get(move_list[index].piece) + translateMove(move_list[index].old_pos) + translateMove(move_list[index].new_pos);
-      sendGet(URL);
+      move = move_list.pop();
+      URL = MOVE_URL + PIECE_NAME.get(move.piece) + translateMove(move.old_pos) + translateMove(move.new_pos);
+      response = sendGet(URL);
     }
-    return move_list[index].board;
+    return move.board;
   }
 }

@@ -1,5 +1,7 @@
 package magnus;
 
+import java.util.Stack;
+
 class Bitmap{
 
   public long[] king_xray = null;
@@ -17,6 +19,8 @@ class Bitmap{
   public long[] deg135_board = null;
   public long[] deg225_board = null;
   public long[] deg315_board = null;
+
+  public int[] PAWN_FINAL_RANK = new int[]{Player.RANK_7, Player.RANK_2};
 
   public Bitmap(){
     generateBitmaps();
@@ -345,12 +349,11 @@ class Bitmap{
     return count;
   }
 
-  public Move[] generateMoves(Bitboard bb){
-    Move[] output = new Move[500];
-    int index = 0;
+  public Stack<Move> generateMoves(Bitboard bb){
+    Stack<Move> output = new Stack<Move>();
     long piece_bitboard = 0L;
-    // TODO: switch back to normal for loop once all pieces implemented.
-    for (int piece = 0; piece < 6; piece++){
+
+    for (int piece = 0; piece < 5; piece++){
       piece_bitboard = bb.board[bb.color][piece];
 
       // Iterate through the existing piece locations.
@@ -363,12 +366,41 @@ class Bitmap{
         while(possible_moves > 0){
           int new_pos = Long.numberOfTrailingZeros(possible_moves);
           possible_moves = possible_moves ^ (1L << (new_pos)); // Turning off rightmost bit.
-          output[index] = new Move(new Bitboard(bb, bb.color, piece, old_pos, new_pos) , piece, old_pos, new_pos);
-          index++;
+          output.push(new Move(new Bitboard(bb, bb.color, piece, old_pos, new_pos) , piece, old_pos, new_pos));
         }
       }
     }
+    // Pawn move generation.
+    generateMovesHelper(bb, output);
     return output;
+  }
+
+  private void generateMovesHelper(Bitboard bb, Stack<Move> output){
+    long piece_bitboard = bb.board[bb.color][Player.PAWN];
+    while(piece_bitboard > 0){
+      int old_pos = Long.numberOfTrailingZeros(piece_bitboard);
+      piece_bitboard = piece_bitboard ^ (1L << (old_pos) ); // Turning off rightmost bit.
+
+      long possible_moves = generatePawnMoves(bb, old_pos);
+      // Iterate through the current pawn's possible moves.
+      if(possible_moves > 0 && old_pos / 8 == PAWN_FINAL_RANK[bb.color]){
+        while(possible_moves > 0){
+          int new_pos = Long.numberOfTrailingZeros(possible_moves);
+          possible_moves = possible_moves ^ (1L << (new_pos)); // Turning off rightmost bit.
+          // Promotion to queen -> knight
+          for(int new_piece = 1; new_piece < 5; new_piece++){
+            output.push(new Move(new Bitboard(bb, bb.color, Player.PAWN, new_piece, old_pos, new_pos) , Player.PAWN, new_piece, old_pos, new_pos));
+          }
+        }
+      }
+      else{
+        while(possible_moves > 0){
+          int new_pos = Long.numberOfTrailingZeros(possible_moves);
+          possible_moves = possible_moves ^ (1L << (new_pos)); // Turning off rightmost bit.
+          output.push(new Move(new Bitboard(bb, bb.color, Player.PAWN, old_pos, new_pos) , Player.PAWN, old_pos, new_pos));
+        }
+      }
+    }
   }
 
   public long generatePieceMoves(Bitboard bb, int piece, int pos){

@@ -31,6 +31,13 @@ class Bitboard {
     else generateUtilBoards(Player.WHITE);
   }
 
+  public Bitboard(Bitboard old_bb, int piece_color, int piece, int new_piece, int old_pos, int new_pos){
+    this.color = old_bb.color;
+    this.board = makeMovePromotion(old_bb.board, piece_color, piece, new_piece, old_pos, new_pos);
+    if (color == Player.WHITE) generateUtilBoards(Player.BLACK);
+    else generateUtilBoards(Player.WHITE);
+  }
+
   private long[] generateMasks(){
     long[] output = new long[64];
     for (int i = 0; i < output.length; i++){
@@ -76,13 +83,32 @@ class Bitboard {
     // Checking for captures
     for(int p = 0; p < 6; p++){
       if ((ending_pos & output[piece_color][p]) > 0) {
-        System.out.printf("\n\n#######CAPTURED PIECE: %d, at %d#########\n", p, new_pos);
         output[piece_color][p] = output[piece_color][p] ^ ending_pos;
       }
     }
     return output;
   }
 
+  private long[][] makeMovePromotion(long[][] bb, int piece_color, int piece, int new_piece, int old_pos, int new_pos){
+    long[][] output = new long[2][6];
+    // Cloning bitboards
+    for (int color = 0; color < 2; color++){
+      for(int p = 0; p < 6; p++){
+        output[color][p] = bb[color][p];
+      }
+    }
+    long ending_pos = (1L << new_pos );
+    output[piece_color][piece] = (output[piece_color][piece] ^ (1L << old_pos ));
+    output[piece_color][new_piece] = output[piece_color][new_piece] | ending_pos;
+    piece_color = piece_color ^ 1; // Convert to other color.
+    // Checking for captures
+    for(int p = 0; p < 6; p++){
+      if ((ending_pos & output[piece_color][p]) > 0) {
+        output[piece_color][p] = output[piece_color][p] ^ ending_pos;
+      }
+    }
+    return output;
+  }
 
   public void generateUtilBoards(int enemy_color){
     long temp = 0L;
