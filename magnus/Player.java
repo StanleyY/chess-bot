@@ -86,23 +86,28 @@ class Player {
       int move_num = 0;
       while(true){
         System.out.printf("\n\n\n\n#######Move Number: %d#######\n\n\n\n\n", move_num);
+        System.out.println("POLLING ATTEMPT");
         while(!ready){
           Thread.sleep(5000);
-          System.out.println("POLLING ATTEMPT");
           response = sendGet(POLL_URL);
           json = (JSONObject) parser.parse(response);
           ready = (boolean) json.get("ready");
         }
-        System.out.println("POLLING RESPONSE" + response);
+        System.out.println("\nPOLLING RESPONSE " + response);
         lastmove = (String) json.get("lastmove");
         if(lastmove.length() > 4){
           char[] temp = lastmove.toCharArray();
-          System.out.printf("MOVE NUM: %d, LAST MOVE: %c%c%c%c%c, OLD POS: %d, NEW POS %d", move_num, temp[0], temp[1], temp[2], temp[3], temp[4],FILE_NAME.indexOf(temp[1]) + ((Character.getNumericValue(temp[2]) - 1) * 8), FILE_NAME.indexOf(temp[3]) + ((Character.getNumericValue(temp[4]) - 1) * 8));
-          b = new Bitboard(b, ENEMY_COLOR, PIECE_NAME.indexOf(temp[0]), FILE_NAME.indexOf(temp[1]) + ((Character.getNumericValue(temp[2]) - 1) * 8), FILE_NAME.indexOf(temp[3]) + ((Character.getNumericValue(temp[4]) - 1) * 8));
-          System.out.println("\n\n#############READ A MOVE, NEW BOARD##########\n\n\n");
+          System.out.println("LAST MOVE WAS: " + lastmove);
+          if(lastmove.length() < 6){
+            b = new Bitboard(b, ENEMY_COLOR, PIECE_NAME.indexOf(temp[0]), FILE_NAME.indexOf(temp[1]) + ((Character.getNumericValue(temp[2]) - 1) * 8), FILE_NAME.indexOf(temp[3]) + ((Character.getNumericValue(temp[4]) - 1) * 8));
+          }
+          else{
+            b = new Bitboard(b, ENEMY_COLOR, PIECE_NAME.indexOf(temp[0]), PIECE_NAME.indexOf(temp[5]), FILE_NAME.indexOf(temp[1]) + ((Character.getNumericValue(temp[2]) - 1) * 8), FILE_NAME.indexOf(temp[3]) + ((Character.getNumericValue(temp[4]) - 1) * 8));
+          }
+          /*System.out.println("\n\n#############READ A MOVE, NEW BOARD##########\n\n\n");
           b.printBitboard(b.OCCUPIED_SQUARES);
           b.printBitboard(b.ENEMY_SQUARES);
-        System.out.println("$$$$$$$$$$$$$$$$$$");
+        System.out.println("$$$$$$$$$$$$$$$$$$");*/
         }
 
         Stack<Move> move_list = bitmap.generateMoves(b);
@@ -170,12 +175,18 @@ class Player {
     while(randomNum-- > 0) move_list.pop();
     Move move = move_list.pop();
     String URL = MOVE_URL + PIECE_NAME.get(move.piece) + translateMove(move.old_pos) + translateMove(move.new_pos);
+    if(move.promo > 0){
+      URL = URL + PIECE_NAME.get(move.promo);
+    }
     String response = sendGet(URL);
     while(response.indexOf("false") > -1){
       System.out.println("INVALID MOVE: " + URL);
       System.out.println("ERROR RESPONSE: " + response);
       move = move_list.pop();
       URL = MOVE_URL + PIECE_NAME.get(move.piece) + translateMove(move.old_pos) + translateMove(move.new_pos);
+      if(move.promo > 0){
+        URL = URL + PIECE_NAME.get(move.promo);
+      }
       response = sendGet(URL);
     }
     return move.board;
