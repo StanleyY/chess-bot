@@ -70,14 +70,6 @@ class Player {
     Bitmap bitmap = new Bitmap();
     Bitboard b = new Bitboard(MY_COLOR);
 
-    b.printPieceBitboards();
-    System.out.println("Occupied Board\n");
-    b.printBitboard(b.OCCUPIED_SQUARES);
-    System.out.println("\nEnemy Board\n");
-    b.printBitboard(b.ENEMY_SQUARES);
-    System.out.println("\nEmpty Board\n");
-    b.printBitboard(b.EMPTY_SQUARES);
-
     try {
       boolean ready = false;
       String lastmove = "";
@@ -85,7 +77,7 @@ class Player {
       JSONObject json = null;
       int move_num = 0;
       while(true){
-        System.out.printf("\n\n\n\n#######Move Number: %d#######\n\n\n\n\n", move_num);
+        System.out.printf("\n\n#######Move Number: %d#######\n\n", move_num);
         System.out.println("POLLING ATTEMPT");
         while(!ready){
           Thread.sleep(5000);
@@ -93,29 +85,26 @@ class Player {
           json = (JSONObject) parser.parse(response);
           ready = (boolean) json.get("ready");
         }
-        System.out.println("\nPOLLING RESPONSE " + response);
+        System.out.printf("\nPOLLING RESPONSE %s\n\n", response);
         lastmove = (String) json.get("lastmove");
         if(lastmove.length() > 4){
           char[] temp = lastmove.toCharArray();
-          System.out.println("LAST MOVE WAS: " + lastmove);
+          System.out.println("OPPONENT'S MOVE WAS: " + lastmove);
           if(lastmove.length() < 6){
             b = new Bitboard(b, ENEMY_COLOR, PIECE_NAME.indexOf(temp[0]), FILE_NAME.indexOf(temp[1]) + ((Character.getNumericValue(temp[2]) - 1) * 8), FILE_NAME.indexOf(temp[3]) + ((Character.getNumericValue(temp[4]) - 1) * 8));
           }
           else{
             b = new Bitboard(b, ENEMY_COLOR, PIECE_NAME.indexOf(temp[0]), PIECE_NAME.indexOf(temp[5]), FILE_NAME.indexOf(temp[1]) + ((Character.getNumericValue(temp[2]) - 1) * 8), FILE_NAME.indexOf(temp[3]) + ((Character.getNumericValue(temp[4]) - 1) * 8));
           }
-          /*System.out.println("\n\n#############READ A MOVE, NEW BOARD##########\n\n\n");
           b.printBitboard(b.OCCUPIED_SQUARES);
           b.printBitboard(b.ENEMY_SQUARES);
-        System.out.println("$$$$$$$$$$$$$$$$$$");*/
         }
 
         Stack<Move> move_list = bitmap.generateMoves(b);
         b = sendMove(move_list);
-        System.out.println("\n#########AFTER MOVE NUM: #########" + move_num);
+        System.out.printf("\n#########AFTER MOVE NUM: %d#########\n\n", move_num);
         b.printBitboard(b.OCCUPIED_SQUARES);
         b.printBitboard(b.ENEMY_SQUARES);
-        System.out.println("$$$$$$$$$$$$$$$$$$");
         ready = false;
         move_num++;
       }
