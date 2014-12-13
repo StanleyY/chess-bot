@@ -30,29 +30,25 @@ class Bitboard {
   public Bitboard(int player_color){
     this.color = player_color;
     this.board = generateNewBoard();
-    if (color == Player.WHITE) generateUtilBoards(Player.BLACK);
-    else generateUtilBoards(Player.WHITE);
+    generateUtilBoards();
   }
 
   public Bitboard(Bitboard bb){
     this.color = bb.color;
     this.board = cloneBoard(bb.board);
-    if (color == Player.WHITE) generateUtilBoards(Player.BLACK);
-    else generateUtilBoards(Player.WHITE);
+    generateUtilBoards();
   }
 
   public Bitboard(Bitboard old_bb, int piece_color, int piece, int old_pos, int new_pos){
     this.color = old_bb.color;
     this.board = makeMove(old_bb.board, piece_color, piece, old_pos, new_pos);
-    if (color == Player.WHITE) generateUtilBoards(Player.BLACK);
-    else generateUtilBoards(Player.WHITE);
+    generateUtilBoards();
   }
 
   public Bitboard(Bitboard old_bb, int piece_color, int piece, int new_piece, int old_pos, int new_pos){
     this.color = old_bb.color;
     this.board = makeMovePromotion(old_bb.board, piece_color, piece, new_piece, old_pos, new_pos);
-    if (color == Player.WHITE) generateUtilBoards(Player.BLACK);
-    else generateUtilBoards(Player.WHITE);
+    generateUtilBoards();
   }
 
 
@@ -162,10 +158,10 @@ class Bitboard {
         this.board[Player.BLACK][2] = this.board[Player.BLACK][2] ^ 0x0900000000000000L;
       }
     }
-    this.generateUtilBoards(this.color ^ 1);
+    this.generateUtilBoards();
   }
 
-  public void generateUtilBoards(int enemy_color){
+  public void generateUtilBoards(){
     long temp = 0L;
     for (int color = 0; color < 2; color++){
       for(int piece = 0; piece < 6; piece++){
@@ -177,7 +173,7 @@ class Bitboard {
     temp = 0L;
 
     for (int piece = 0; piece < 6; piece++){
-      temp = temp | board[enemy_color][piece];
+      temp = temp | board[this.color ^ 1][piece];
     }
     this.ENEMY_SQUARES = temp;
 
