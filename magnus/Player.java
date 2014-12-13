@@ -89,12 +89,16 @@ class Player {
         lastmove = (String) json.get("lastmove");
         if(lastmove.length() > 4){
           char[] temp = lastmove.toCharArray();
+          int piece = PIECE_NAME.indexOf(temp[0]);
+          int old_pos =  FILE_NAME.indexOf(temp[1]) + ((Character.getNumericValue(temp[2]) - 1) * 8);
+          int new_pos = FILE_NAME.indexOf(temp[3]) + ((Character.getNumericValue(temp[4]) - 1) * 8);
           System.out.println("OPPONENT'S MOVE WAS: " + lastmove);
+
           if(lastmove.length() < 6){
-            b = new Bitboard(b, ENEMY_COLOR, PIECE_NAME.indexOf(temp[0]), FILE_NAME.indexOf(temp[1]) + ((Character.getNumericValue(temp[2]) - 1) * 8), FILE_NAME.indexOf(temp[3]) + ((Character.getNumericValue(temp[4]) - 1) * 8));
+            b = new Bitboard(b, ENEMY_COLOR, piece, old_pos, new_pos);
           }
           else{
-            b = new Bitboard(b, ENEMY_COLOR, PIECE_NAME.indexOf(temp[0]), PIECE_NAME.indexOf(temp[5]), FILE_NAME.indexOf(temp[1]) + ((Character.getNumericValue(temp[2]) - 1) * 8), FILE_NAME.indexOf(temp[3]) + ((Character.getNumericValue(temp[4]) - 1) * 8));
+            b = new Bitboard(b, ENEMY_COLOR, piece, PIECE_NAME.indexOf(temp[5]), old_pos, new_pos);
           }
           b.printBitboard(b.OCCUPIED_SQUARES);
           b.printBitboard(b.ENEMY_SQUARES);
