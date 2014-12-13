@@ -14,6 +14,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.parser.ParseException;
 import org.json.simple.parser.JSONParser;
 
+import java.util.Date;
 
 class Player {
 
@@ -41,6 +42,10 @@ class Player {
 
   public static String POLL_URL = "";
   public static String MOVE_URL = "";
+  public static int MY_COLOR = -1;
+  public static int ENEMY_COLOR = -1;
+
+  static Bitmap bitmap = new Bitmap();
 
   public static void main(String[] args) throws Exception{
     if (args.length < 4) {
@@ -50,8 +55,9 @@ class Player {
     int GAME_ID = Integer.parseInt(args[0]);
     int TEAM_NUMBER = Integer.parseInt(args[1]);
     String TEAM_SECRET = args[2];
-    int MY_COLOR = Integer.parseInt(args[3]);
-    int ENEMY_COLOR = -1;
+    MY_COLOR = Integer.parseInt(args[3]);
+    ENEMY_COLOR = MY_COLOR ^ 1;
+
     System.out.printf("ID: %d, NUM: %d, SECRET: %s\n", GAME_ID, TEAM_NUMBER, TEAM_SECRET);
     POLL_URL = String.format("http://www.bencarle.com/chess/poll/%d/%d/%s", GAME_ID, TEAM_NUMBER, TEAM_SECRET);
     MOVE_URL = String.format("http://www.bencarle.com/chess/move/%d/%d/%s/", GAME_ID, TEAM_NUMBER, TEAM_SECRET);
@@ -63,11 +69,7 @@ class Player {
       PIECE_NAME.add(c);
     }
 
-    if (MY_COLOR == WHITE) {ENEMY_COLOR = BLACK;}
-    else {ENEMY_COLOR = WHITE;}
-
     JSONParser parser = new JSONParser();
-    Bitmap bitmap = new Bitmap();
     Bitboard b = new Bitboard(MY_COLOR);
 
     try {
@@ -80,7 +82,7 @@ class Player {
         System.out.printf("\n\n####### Move Number: %d #######\n\n", move_num);
         System.out.println("POLLING ATTEMPT");
         while(!ready){
-          Thread.sleep(5000);
+          Thread.sleep(2500);
           response = sendGet(POLL_URL);
           json = (JSONObject) parser.parse(response);
           ready = (boolean) json.get("ready");
@@ -95,7 +97,7 @@ class Player {
           System.out.println("OPPONENT'S MOVE WAS: " + lastmove);
 
           if(lastmove.length() < 6){
-            if(piece == KING && Math.abs(new_pos - old_pos) > 1){
+            if(piece == KING && Math.abs((new_pos % 8) - (old_pos % 8)) > 1){
               // Swap colors, castle, swap again.
               b.color = b.color ^ 1;
               b = b.castle(new_pos);
@@ -113,10 +115,17 @@ class Player {
         }
 
         Stack<Move> move_list = bitmap.generateMoves(b);
-        b = sendMove(move_list);
+        Move pv = search(move_list);
+        //Move pv = move_list.pop();
+        b = sendMove(pv, move_list);
         System.out.printf("\n######### AFTER MOVE NUM: %d #########\n\n", move_num);
+        System.out.println("MY COLORS IS: " + MY_COLOR);
+        System.out.println("OCCUPIED_SQUARES");
         b.printBitboard(b.OCCUPIED_SQUARES);
+        System.out.println("ENEMY_SQUARES");
         b.printBitboard(b.ENEMY_SQUARES);
+        System.out.println("MY_SQUARES");
+        b.printBitboard(~b.ENEMY_AND_EMPTY_SQUARES);
         ready = false;
         move_num++;
       }
@@ -138,6 +147,55 @@ class Player {
     }*/
   }
 
+  public static Move search(Stack<Move> move_list){
+    Move pv = null;
+    Move current_move;
+    int best_value = -40000;
+    int temp;
+    System.out.println("Start time: " + new java.util.Date());
+    while(move_list.size() > 0){
+      current_move = move_list.pop();
+      temp = alphabeta(current_move, 5, -40000, 40000, false);
+      System.out.printf("BEST VALUE UPDATED: Piece: %s, Original: %s, New: %s, Score: %d \n\n", PIECE_NAME.get(current_move.piece), translateMove(current_move.old_pos), translateMove(current_move.new_pos), temp);
+      //System.out.println("Temp" + temp);
+      if(temp > best_value){
+        pv = current_move;
+        best_value = temp;
+      }
+    }
+    System.out.println("End time: " + new java.util.Date() + "\n");
+    System.out.println("Best Score: " + best_value);
+    if (pv.board.color != MY_COLOR) pv.board.color = pv.board.color ^ 1;
+    return pv;
+  }
+
+  public static int alphabeta(Move node, int depth, int alpha, int beta, boolean max){
+    if (depth == 0 || node.board.board[WHITE][0] == 0 || node.board.board[BLACK][0] == 0){
+      return node.board.eval();
+    }
+    int score;
+    node.board.color = node.board.color ^ 1;
+    Stack<Move> children = bitmap.generateMoves(node.board);
+    Move child;
+    if(max){
+      while(children.size() > 0){
+        child = children.pop();
+        score = alphabeta(child, depth - 1, alpha, beta, false);
+        if(score > alpha) alpha =  score;
+        if(beta <= alpha) break;
+      }
+      return alpha;
+    }
+    else{
+      while(children.size() > 0){
+        child = children.pop();
+        score = alphabeta(child, depth - 1, alpha, beta, true);
+        if(score < beta) beta =  score;
+        if(beta <= alpha) break;
+      }
+      return beta;
+    }
+  }
 
   public static String translateMove(int move){
     return  FILE_NAME.get(move % 8) + "" + ((move / 8) + 1);
@@ -170,11 +228,9 @@ class Player {
     return null;
   }
 
-  public static Bitboard sendMove(Stack<Move> move_list){
+  public static Bitboard sendMove(Move pv, Stack<Move> move_list){
     Random rand = new Random();
-    int randomNum = rand.nextInt(move_list.size());
-    while(randomNum-- > 0) move_list.pop();
-    Move move = move_list.pop();
+    Move move = pv;
     String URL = MOVE_URL + PIECE_NAME.get(move.piece) + translateMove(move.old_pos) + translateMove(move.new_pos);
     if(move.promo > 0){
       URL = URL + PIECE_NAME.get(move.promo);
