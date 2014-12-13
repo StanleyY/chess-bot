@@ -361,14 +361,14 @@ class Bitmap{
 
     if(bb.color == Player.WHITE){
       if(bb.HAS_WHITE_KING_NOT_MOVED){
-        if(bb.HAS_WHITE_KING_ROOK_NOT_MOVED) kingsideCastleCheck(bb, output);
-        if(bb.HAS_WHITE_QUEEN_ROOK_NOT_MOVED) queensideCastleCheck(bb, output);
+        if(bb.HAS_WHITE_KING_ROOK_NOT_MOVED && ((bb.board[Player.WHITE][2] & (1L << 7)) == (1L << 7))) kingsideCastleCheck(bb, output);
+        if(bb.HAS_WHITE_QUEEN_ROOK_NOT_MOVED && ((bb.board[Player.WHITE][2] & 1) == 1)) queensideCastleCheck(bb, output);
       }
     }
     else{
       if(bb.HAS_BLACK_KING_NOT_MOVED){
-        if(bb.HAS_BLACK_KING_ROOK_NOT_MOVED) kingsideCastleCheck(bb, output);
-        if(bb.HAS_BLACK_QUEEN_ROOK_NOT_MOVED) queensideCastleCheck(bb, output);
+        if(bb.HAS_BLACK_KING_ROOK_NOT_MOVED && ((bb.board[Player.BLACK][2] & (1L << 63)) == (1L << 63))) kingsideCastleCheck(bb, output);
+        if(bb.HAS_BLACK_QUEEN_ROOK_NOT_MOVED && ((bb.board[Player.BLACK][2] & (1L << 56)) == (1L << 56))) queensideCastleCheck(bb, output);
       }
     }
 
