@@ -20,7 +20,13 @@ class Bitmap{
   public long[] deg225_board = null;
   public long[] deg315_board = null;
 
-  public int[] PAWN_FINAL_RANK = new int[]{Player.RANK_7, Player.RANK_2};
+  public final int[] PAWN_FINAL_RANK = new int[]{Player.RANK_7, Player.RANK_2};
+
+  // Castling constants
+  public final long WHITE_KINGSIDE_EMPTY =  3L << 5;
+  public final long BLACK_KINGSIDE_EMPTY = 3L << 61;
+  public final long WHITE_QUEENSIDE_EMPTY = 7L << 1;
+  public final long BLACK_QUEENSIDE_EMPTY = 7L << 57;
 
   public Bitmap(){
     generateBitmaps();
@@ -353,6 +359,19 @@ class Bitmap{
     Stack<Move> output = new Stack<Move>();
     long piece_bitboard = 0L;
 
+    if(bb.color == Player.WHITE){
+      if(bb.HAS_WHITE_KING_NOT_MOVED){
+        if(bb.HAS_WHITE_KING_ROOK_NOT_MOVED) kingsideCastleCheck(bb, output);
+        if(bb.HAS_WHITE_QUEEN_ROOK_NOT_MOVED) queensideCastleCheck(bb, output);
+      }
+    }
+    else{
+      if(bb.HAS_BLACK_KING_NOT_MOVED){
+        if(bb.HAS_BLACK_KING_ROOK_NOT_MOVED) kingsideCastleCheck(bb, output);
+        if(bb.HAS_BLACK_QUEEN_ROOK_NOT_MOVED) queensideCastleCheck(bb, output);
+      }
+    }
+
     for (int piece = 0; piece < 5; piece++){
       piece_bitboard = bb.board[bb.color][piece];
 
@@ -375,6 +394,7 @@ class Bitmap{
     return output;
   }
 
+  // Generates the Pawn moves.
   private void generateMovesHelper(Bitboard bb, Stack<Move> output){
     long piece_bitboard = bb.board[bb.color][Player.PAWN];
     while(piece_bitboard > 0){
@@ -400,6 +420,24 @@ class Bitmap{
           output.push(new Move(new Bitboard(bb, bb.color, Player.PAWN, old_pos, new_pos) , Player.PAWN, old_pos, new_pos));
         }
       }
+    }
+  }
+
+  public void kingsideCastleCheck(Bitboard bb, Stack<Move> output){
+    if(bb.color == Player.WHITE){
+      if((bb.OCCUPIED_SQUARES & WHITE_KINGSIDE_EMPTY) == 0) output.push(new Move(bb.castle(6), Player.KING, 4, 6));
+    }
+    else{
+      if((bb.OCCUPIED_SQUARES & BLACK_KINGSIDE_EMPTY) == 0) output.push(new Move(bb.castle(62), Player.KING, 60, 62));
+    }
+  }
+
+  public void queensideCastleCheck(Bitboard bb, Stack<Move> output){
+    if(bb.color == Player.WHITE){
+      if((bb.OCCUPIED_SQUARES & WHITE_QUEENSIDE_EMPTY) == 0) output.push(new Move(bb.castle(2), Player.KING, 4, 2));
+    }
+    else{
+      if((bb.OCCUPIED_SQUARES & BLACK_QUEENSIDE_EMPTY) == 0) output.push(new Move(bb.castle(58), Player.KING, 60, 58));
     }
   }
 

@@ -15,9 +15,28 @@ class Bitboard {
   public long ENEMY_AND_EMPTY_SQUARES = 0L;
   public long OCCUPIED_SQUARES = 0L;
 
+  // Castling
+  public boolean HAS_WHITE_CASTLED = false;
+  public boolean HAS_WHITE_KING_NOT_MOVED = true;
+  public boolean HAS_WHITE_KING_ROOK_NOT_MOVED = true;
+  public boolean HAS_WHITE_QUEEN_ROOK_NOT_MOVED = true;
+
+  public boolean HAS_BLACK_CASTLED = false;
+  public boolean HAS_BLACK_KING_NOT_MOVED = true;
+  public boolean HAS_BLACK_KING_ROOK_NOT_MOVED = true;
+  public boolean HAS_BLACK_QUEEN_ROOK_NOT_MOVED = true;
+
+
   public Bitboard(int player_color){
     this.color = player_color;
     this.board = generateNewBoard();
+    if (color == Player.WHITE) generateUtilBoards(Player.BLACK);
+    else generateUtilBoards(Player.WHITE);
+  }
+
+  public Bitboard(Bitboard bb){
+    this.color = bb.color;
+    this.board = cloneBoard(bb.board);
     if (color == Player.WHITE) generateUtilBoards(Player.BLACK);
     else generateUtilBoards(Player.WHITE);
   }
@@ -58,6 +77,16 @@ class Bitboard {
     return output;
   }
 
+  private long[][] cloneBoard(long[][] original){
+    long[][] output = new long[2][6];
+    // Cloning bitboards
+    for (int color = 0; color < 2; color++){
+      for(int p = 0; p < 6; p++){
+        output[color][p] = original[color][p];
+      }
+    }
+    return output;
+  }
 
   private long[][] makeMove(long[][] bb, int piece_color, int piece, int old_pos, int new_pos){
     long[][] output = new long[2][6];
@@ -98,6 +127,42 @@ class Bitboard {
       }
     }
     return output;
+  }
+
+  public Bitboard castle(int new_pos){
+    Bitboard new_bb = new Bitboard(this); //Cloning
+    new_bb.makeCastle(new_pos);
+    return new_bb;
+  }
+
+  public void makeCastle(int new_pos){
+    if(this.board[this.color][0] < (1L << new_pos)){
+      //Kingside castle
+      if(this.color == Player.WHITE){
+        this.HAS_WHITE_CASTLED = true;
+        this.board[Player.WHITE][0] = 0x0000000000000040L;
+        this.board[Player.WHITE][2] = this.board[Player.WHITE][2] ^ 0x00000000000000A0L;
+      }
+      else{
+        this.HAS_BLACK_CASTLED = true;
+        this.board[Player.BLACK][0] = 0x4000000000000000L;
+        this.board[Player.BLACK][2] = this.board[Player.BLACK][2] ^ 0xA000000000000000L;
+      }
+    }
+    else{
+      //Queenside
+      if(this.color == Player.WHITE){
+        this.HAS_WHITE_CASTLED = true;
+        this.board[Player.WHITE][0] = 0x0000000000000004L;
+        this.board[Player.WHITE][2] = this.board[Player.WHITE][2] ^ 0x0000000000000009L;
+      }
+      else{
+        this.HAS_BLACK_CASTLED = true;
+        this.board[Player.BLACK][0] = 0x0400000000000000L;
+        this.board[Player.BLACK][2] = this.board[Player.BLACK][2] ^ 0x0900000000000000L;
+      }
+    }
+    this.generateUtilBoards(this.color ^ 1);
   }
 
   public void generateUtilBoards(int enemy_color){
