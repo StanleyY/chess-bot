@@ -4,8 +4,7 @@ class Bitboard {
 
   public long[][] board = null;
   public int color = -1;
-  public long king_moves = 0L;
-  public long knight_moves = 0L;
+  public int value;
 
   // Useful utility boards
   private long FULL_BOARD = 0xFFFFFFFFFFFFFFFFL;
@@ -29,6 +28,7 @@ class Bitboard {
     this.color = player_color;
     this.board = generateNewBoard();
     generateUtilBoards();
+    this.value = eval();
   }
 
   public Bitboard(Bitboard bb){
@@ -42,6 +42,7 @@ class Bitboard {
     this.HAS_BLACK_QUEEN_ROOK_NOT_MOVED = bb.HAS_BLACK_QUEEN_ROOK_NOT_MOVED;
     this.board = cloneBoard(bb.board);
     generateUtilBoards();
+    this.value = eval();
   }
 
   public Bitboard(Bitboard old_bb, int piece_color, int piece, int old_pos, int new_pos){
@@ -55,6 +56,7 @@ class Bitboard {
     this.HAS_BLACK_QUEEN_ROOK_NOT_MOVED = old_bb.HAS_BLACK_QUEEN_ROOK_NOT_MOVED;
     this.board = makeMove(old_bb.board, piece_color, piece, old_pos, new_pos);
     generateUtilBoards();
+    this.value = eval();
   }
 
   public Bitboard(Bitboard old_bb, int piece_color, int piece, int new_piece, int old_pos, int new_pos){
@@ -68,6 +70,7 @@ class Bitboard {
     this.HAS_BLACK_QUEEN_ROOK_NOT_MOVED = old_bb.HAS_BLACK_QUEEN_ROOK_NOT_MOVED;
     this.board = makeMovePromotion(old_bb.board, piece_color, piece, new_piece, old_pos, new_pos);
     generateUtilBoards();
+    this.value = eval();
   }
 
 
@@ -218,6 +221,21 @@ class Bitboard {
     this.ENEMY_AND_EMPTY_SQUARES = this.EMPTY_SQUARES | temp;
   }
 
+  // TODO: Make actual evaluation function.
+  public int eval(){
+    return materialValue();
+  }
+
+  private int materialValue(){
+    int total;
+    total = 30000 * (Bitmap.count_set_bits(this.board[this.color][0]) - Bitmap.count_set_bits(this.board[this.color][0]))
+          + 900 * (Bitmap.count_set_bits(this.board[this.color][1]) - Bitmap.count_set_bits(this.board[this.color ^ 1][1]))
+          + 600 * (Bitmap.count_set_bits(this.board[this.color][2]) - Bitmap.count_set_bits(this.board[this.color ^ 1][2]))
+          + 380 * (Bitmap.count_set_bits(this.board[this.color][3]) - Bitmap.count_set_bits(this.board[this.color ^ 1][3]))
+          + 350 * (Bitmap.count_set_bits(this.board[this.color][4]) - Bitmap.count_set_bits(this.board[this.color ^ 1][4]))
+          + 100 * (Bitmap.count_set_bits(this.board[this.color][5]) - Bitmap.count_set_bits(this.board[this.color ^ 1][5]));
+    return total;
+  }
 
   public void printBitboard(long board){
     String line = "";
