@@ -77,7 +77,7 @@ class Player {
       JSONObject json = null;
       int move_num = 0;
       while(true){
-        System.out.printf("\n\n#######Move Number: %d#######\n\n", move_num);
+        System.out.printf("\n\n####### Move Number: %d #######\n\n", move_num);
         System.out.println("POLLING ATTEMPT");
         while(!ready){
           Thread.sleep(5000);
@@ -95,7 +95,15 @@ class Player {
           System.out.println("OPPONENT'S MOVE WAS: " + lastmove);
 
           if(lastmove.length() < 6){
-            b = new Bitboard(b, ENEMY_COLOR, piece, old_pos, new_pos);
+            if(piece == KING && Math.abs(new_pos - old_pos) > 1){
+              // Swap colors, castle, swap again.
+              b.color = b.color ^ 1;
+              b = b.castle(new_pos);
+              b.color = b.color ^ 1;
+            }
+            else{
+              b = new Bitboard(b, ENEMY_COLOR, piece, old_pos, new_pos);
+            }
           }
           else{
             b = new Bitboard(b, ENEMY_COLOR, piece, PIECE_NAME.indexOf(temp[5]), old_pos, new_pos);
@@ -106,7 +114,7 @@ class Player {
 
         Stack<Move> move_list = bitmap.generateMoves(b);
         b = sendMove(move_list);
-        System.out.printf("\n#########AFTER MOVE NUM: %d#########\n\n", move_num);
+        System.out.printf("\n######### AFTER MOVE NUM: %d #########\n\n", move_num);
         b.printBitboard(b.OCCUPIED_SQUARES);
         b.printBitboard(b.ENEMY_SQUARES);
         ready = false;
@@ -164,7 +172,7 @@ class Player {
 
   public static Bitboard sendMove(Stack<Move> move_list){
     Random rand = new Random();
-    int randomNum = rand.nextInt((move_list.size() - 3) + 1);
+    int randomNum = rand.nextInt(move_list.size());
     while(randomNum-- > 0) move_list.pop();
     Move move = move_list.pop();
     String URL = MOVE_URL + PIECE_NAME.get(move.piece) + translateMove(move.old_pos) + translateMove(move.new_pos);
