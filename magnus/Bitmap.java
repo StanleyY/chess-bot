@@ -372,7 +372,7 @@ class Bitmap{
       }
     }
 
-    for (int piece = 0; piece < 5; piece++){
+    for (int piece = 4; piece > -1; piece--){
       piece_bitboard = bb.board[bb.color][piece];
 
       // Iterate through the existing piece locations.
