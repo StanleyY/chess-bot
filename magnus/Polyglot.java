@@ -10,15 +10,18 @@ learn  uint32 4
 
 class Polyglot{
   public static byte[] book = null;
+  // REMOVE WHEN DONE TESTING
   public static final char[] FILE_NAME = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
   public static final String[] PIECE_NAME = new String[]{"K", "Q", "R", "B", "N", "P"};
+  private static final int[] KIND_OF_PIECE = new int[]{11, 9, 7, 5, 3, 1, 10, 8, 6, 4, 2, 0};
 
   private static final long[] random64 = random64Table();
   public static void main(String[] args){
     read();
-    System.out.println("Size: " + book.length);
-    System.out.println("Entries: " + (book.length / 16));
+    //System.out.println("Size: " + book.length);
+    //System.out.println("Entries: " + (book.length / 16));
     int found = 0;
+    /*
     for (int i = 0; i < book.length; i = i + 16){
       long key =  0L;
       byte[] by = new byte[]{book[i], book[i+1], book[i+2], book[i+3], book[i+4], book[i+5], book[i+6], book[i+7]};
@@ -38,8 +41,8 @@ class Polyglot{
       weight = (weight << 8) + (book[i + 10] & 0xff);
       weight = (weight << 8) + (book[i + 11] & 0xff);
 
-      long test_key = 0x823c9b50fd114196L;
-      //long test_key = 0x463b96181691fc9cL;
+      //long test_key = 0x823c9b50fd114196L;
+      long test_key = 0x463b96181691fc9cL;
       if(test_key == key){
         found++;
         System.out.println("move: " + Integer.toBinaryString(move));
@@ -48,7 +51,56 @@ class Polyglot{
         System.out.println("");
       }
     }
-    System.out.println("FOUND MATCHES: " + found);
+    System.out.println("FOUND MATCHES: " + found); */
+    /*
+    Bitboard bb = new Bitboard(0);
+    System.out.println("Hash: " + Long.toHexString(hash(bb)));
+    System.out.println("Goal: " + Long.toHexString(0x463b96181691fc9cL));
+    */
+  }
+
+  public static long hash(Bitboard bb){
+    int offset = 0;
+    long finalKey = 0L;
+    int color_offset = 5 * bb.color; //0 or 5
+    long piece_bitboard;
+
+    for(int piece = 0; piece < 6; piece++){
+      piece_bitboard = bb.board[Player.WHITE][piece];
+      while(piece_bitboard != 0){
+        int pos = Long.numberOfTrailingZeros(piece_bitboard);
+        piece_bitboard = piece_bitboard ^ (1L << (pos) ); // Turning off rightmost bit.
+        finalKey ^= random64[(64 * KIND_OF_PIECE[piece] + pos)];
+      }
+    }
+
+    for(int piece = 0; piece < 6; piece++){
+      piece_bitboard = bb.board[Player.BLACK][piece];
+      while(piece_bitboard != 0){
+        int pos = Long.numberOfTrailingZeros(piece_bitboard);
+        piece_bitboard = piece_bitboard ^ (1L << (pos) ); // Turning off rightmost bit.
+        finalKey ^= random64[(64 * KIND_OF_PIECE[piece + 6] + pos)];
+      }
+    }
+
+    offset = 768;
+    if(bb.HAS_WHITE_KING_NOT_MOVED){
+      if(bb.HAS_WHITE_KING_ROOK_NOT_MOVED) finalKey ^= random64[offset + 0];
+      if(bb.HAS_WHITE_QUEEN_ROOK_NOT_MOVED) finalKey ^= random64[offset + 1];
+    }
+    if(bb.HAS_BLACK_KING_NOT_MOVED){
+      if(bb.HAS_BLACK_KING_ROOK_NOT_MOVED) finalKey ^= random64[offset + 2];
+      if(bb.HAS_BLACK_QUEEN_ROOK_NOT_MOVED) finalKey ^= random64[offset + 3];
+    }
+
+    // TODO: Fix when I get en passant working.
+    offset = 772;
+    //finalKey ^= random64[offset];
+
+    if(bb.color == Player.WHITE) {
+      finalKey ^= random64[780];
+    }
+    return finalKey;
   }
 
   static void read(){
