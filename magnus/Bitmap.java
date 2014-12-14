@@ -376,13 +376,13 @@ class Bitmap{
       piece_bitboard = bb.board[bb.color][piece];
 
       // Iterate through the existing piece locations.
-      while(piece_bitboard > 0){
+      while( piece_bitboard != 0){
         int old_pos = Long.numberOfTrailingZeros(piece_bitboard);
         piece_bitboard = piece_bitboard ^ (1L << (old_pos) ); // Turning off rightmost bit.
 
         long possible_moves = generatePieceMoves(bb, piece, old_pos);
         // Iterate through the current piece's possible moves.
-        while(possible_moves > 0){
+        while(possible_moves != 0){
           int new_pos = Long.numberOfTrailingZeros(possible_moves);
           possible_moves = possible_moves ^ (1L << (new_pos)); // Turning off rightmost bit.
           output.push(new Bitboard(bb, bb.color, piece, old_pos, new_pos));
@@ -397,14 +397,14 @@ class Bitmap{
   // Generates the Pawn moves.
   private void generateMovesHelper(Bitboard bb, Stack<Bitboard> output){
     long piece_bitboard = bb.board[bb.color][Player.PAWN];
-    while(piece_bitboard > 0){
+    while(piece_bitboard != 0){
       int old_pos = Long.numberOfTrailingZeros(piece_bitboard);
       piece_bitboard = piece_bitboard ^ (1L << (old_pos) ); // Turning off rightmost bit.
 
       long possible_moves = generatePawnMoves(bb, old_pos);
       // Iterate through the current pawn's possible moves.
-      if(possible_moves > 0 && old_pos / 8 == PAWN_FINAL_RANK[bb.color]){
-        while(possible_moves > 0){
+      if(possible_moves != 0 && old_pos / 8 == PAWN_FINAL_RANK[bb.color]){
+        while(possible_moves != 0){
           int new_pos = Long.numberOfTrailingZeros(possible_moves);
           possible_moves = possible_moves ^ (1L << (new_pos)); // Turning off rightmost bit.
           // Promotion to queen -> knight
@@ -414,7 +414,7 @@ class Bitmap{
         }
       }
       else{
-        while(possible_moves > 0){
+        while(possible_moves != 0){
           int new_pos = Long.numberOfTrailingZeros(possible_moves);
           possible_moves = possible_moves ^ (1L << (new_pos)); // Turning off rightmost bit.
           output.push(new Bitboard(bb, bb.color, Player.PAWN, old_pos, new_pos));
@@ -539,13 +539,13 @@ class Bitmap{
 
   private long generatePawnMoves(Bitboard bb, int pos){
     if(bb.color == Player.WHITE && pos < 16 && pos > 7){
-      if ((pawn_single_xray[Player.WHITE][pos] & bb.EMPTY_SQUARES) > 0){
+      if ((pawn_single_xray[Player.WHITE][pos] & bb.EMPTY_SQUARES) != 0){
         return (pawn_single_xray[Player.WHITE][pos] & bb.EMPTY_SQUARES) | (pawn_double_xray[Player.WHITE][pos - 8] & bb.EMPTY_SQUARES) | (pawn_capture_xray[Player.WHITE][pos] & bb.ENEMY_SQUARES);
       }
       else return (pawn_capture_xray[Player.WHITE][pos] & bb.ENEMY_SQUARES);
     }
     else if (bb.color == Player.BLACK && pos > 47 && pos < 56) {
-      if ((pawn_single_xray[Player.BLACK][pos] & bb.EMPTY_SQUARES) > 0){
+      if ((pawn_single_xray[Player.BLACK][pos] & bb.EMPTY_SQUARES) != 0){
         return ((pawn_single_xray[Player.BLACK][pos] & bb.EMPTY_SQUARES) | (pawn_double_xray[Player.BLACK][pos - 48] & bb.EMPTY_SQUARES) | (pawn_capture_xray[Player.BLACK][pos] & bb.ENEMY_SQUARES));
       }
       else return (pawn_capture_xray[Player.BLACK][pos] & bb.ENEMY_SQUARES);

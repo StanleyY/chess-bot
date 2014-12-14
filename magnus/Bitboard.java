@@ -155,7 +155,7 @@ class Bitboard {
     piece_color = piece_color ^ 1; // Convert to other color.
     // Checking for captures
     for(int p = 0; p < 6; p++){
-      if ((ending_pos & output[piece_color][p]) > 0) {
+      if ((ending_pos & output[piece_color][p]) != 0) {
         output[piece_color][p] = output[piece_color][p] ^ ending_pos;
       }
     }
@@ -176,7 +176,7 @@ class Bitboard {
     piece_color = piece_color ^ 1; // Convert to other color.
     // Checking for captures
     for(int p = 0; p < 6; p++){
-      if ((ending_pos & output[piece_color][p]) > 0) {
+      if ((ending_pos & output[piece_color][p]) != 0) {
         output[piece_color][p] = output[piece_color][p] ^ ending_pos;
       }
     }
