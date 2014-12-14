@@ -114,8 +114,8 @@ class Player {
           b.printBitboard(b.ENEMY_SQUARES);
         }
 
-        Stack<Move> move_list = bitmap.generateMoves(b);
-        Move pv = search(move_list);
+        Stack<Bitboard> move_list = bitmap.generateMoves(b);
+        Bitboard pv = search(move_list);
         //Move pv = move_list.pop();
         b = sendMove(pv, move_list);
         System.out.printf("\n######### AFTER MOVE NUM: %d #########\n\n", move_num);
@@ -147,16 +147,16 @@ class Player {
     }*/
   }
 
-  public static Move search(Stack<Move> move_list){
-    Move pv = null;
-    Move current_move;
+  public static Bitboard search(Stack<Bitboard> move_list){
+    Bitboard pv = null;
+    Bitboard current_move;
     int best_value = -40000;
     int temp;
     System.out.println("Start time: " + new java.util.Date());
     while(move_list.size() > 0){
       current_move = move_list.pop();
       temp = alphabeta(current_move, 5, -40000, 40000, false);
-      System.out.printf("BEST VALUE UPDATED: Piece: %s, Original: %s, New: %s, Score: %d \n\n", PIECE_NAME.get(current_move.piece), translateMove(current_move.old_pos), translateMove(current_move.new_pos), temp);
+      System.out.printf("BEST VALUE UPDATED: Piece: %s, Original: %s, New: %s, Score: %d \n\n", PIECE_NAME.get(current_move.last_piece), translateMove(current_move.old_pos), translateMove(current_move.new_pos), temp);
       //System.out.println("Temp" + temp);
       if(temp > best_value){
         pv = current_move;
@@ -165,18 +165,18 @@ class Player {
     }
     System.out.println("End time: " + new java.util.Date() + "\n");
     System.out.println("Best Score: " + best_value);
-    if (pv.board.color != MY_COLOR) pv.board.color = pv.board.color ^ 1;
+    if (pv.color != MY_COLOR) pv.color = pv.color ^ 1;
     return pv;
   }
 
-  public static int alphabeta(Move node, int depth, int alpha, int beta, boolean max){
-    if (depth == 0 || node.board.board[WHITE][0] == 0 || node.board.board[BLACK][0] == 0){
-      return node.board.eval();
+  public static int alphabeta(Bitboard node, int depth, int alpha, int beta, boolean max){
+    if (depth == 0 || node.board[WHITE][0] == 0 || node.board[BLACK][0] == 0){
+      return node.eval();
     }
     int score;
-    node.board.color = node.board.color ^ 1;
-    Stack<Move> children = bitmap.generateMoves(node.board);
-    Move child;
+    node.color = node.color ^ 1;
+    Stack<Bitboard> children = bitmap.generateMoves(node);
+    Bitboard child;
     if(max){
       while(children.size() > 0){
         child = children.pop();
@@ -228,10 +228,10 @@ class Player {
     return null;
   }
 
-  public static Bitboard sendMove(Move pv, Stack<Move> move_list){
+  public static Bitboard sendMove(Bitboard pv, Stack<Bitboard> move_list){
     Random rand = new Random();
-    Move move = pv;
-    String URL = MOVE_URL + PIECE_NAME.get(move.piece) + translateMove(move.old_pos) + translateMove(move.new_pos);
+    Bitboard move = pv;
+    String URL = MOVE_URL + PIECE_NAME.get(move.last_piece) + translateMove(move.old_pos) + translateMove(move.new_pos);
     if(move.promo > 0){
       URL = URL + PIECE_NAME.get(move.promo);
     }
@@ -240,12 +240,12 @@ class Player {
       System.out.println("INVALID MOVE: " + URL);
       System.out.println("ERROR RESPONSE: " + response);
       move = move_list.pop();
-      URL = MOVE_URL + PIECE_NAME.get(move.piece) + translateMove(move.old_pos) + translateMove(move.new_pos);
+      URL = MOVE_URL + PIECE_NAME.get(move.last_piece) + translateMove(move.old_pos) + translateMove(move.new_pos);
       if(move.promo > 0){
         URL = URL + PIECE_NAME.get(move.promo);
       }
       response = sendGet(URL);
     }
-    return move.board;
+    return move;
   }
 }

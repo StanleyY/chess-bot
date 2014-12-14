@@ -6,6 +6,12 @@ class Bitboard {
   public int color = -1;
   public int value;
 
+  // Previous move information.
+  public int last_piece;
+  public int old_pos;
+  public int new_pos;
+  public int promo = -1;
+
   // Useful utility boards
   private long FULL_BOARD = 0xFFFFFFFFFFFFFFFFL;
 
@@ -54,7 +60,12 @@ class Bitboard {
     this.HAS_BLACK_KING_NOT_MOVED = old_bb.HAS_BLACK_KING_NOT_MOVED;
     this.HAS_BLACK_KING_ROOK_NOT_MOVED = old_bb.HAS_BLACK_KING_ROOK_NOT_MOVED;
     this.HAS_BLACK_QUEEN_ROOK_NOT_MOVED = old_bb.HAS_BLACK_QUEEN_ROOK_NOT_MOVED;
+
     this.board = makeMove(old_bb.board, piece_color, piece, old_pos, new_pos);
+    this.last_piece = piece;
+    this.old_pos = old_pos;
+    this.new_pos = new_pos;
+
     generateUtilBoards();
     //this.value = eval();
   }
@@ -68,7 +79,13 @@ class Bitboard {
     this.HAS_BLACK_KING_NOT_MOVED = old_bb.HAS_BLACK_KING_NOT_MOVED;
     this.HAS_BLACK_KING_ROOK_NOT_MOVED = old_bb.HAS_BLACK_KING_ROOK_NOT_MOVED;
     this.HAS_BLACK_QUEEN_ROOK_NOT_MOVED = old_bb.HAS_BLACK_QUEEN_ROOK_NOT_MOVED;
+
     this.board = makeMovePromotion(old_bb.board, piece_color, piece, new_piece, old_pos, new_pos);
+    this.last_piece = piece;
+    this.old_pos = old_pos;
+    this.new_pos = new_pos;
+    this.promo = new_piece;
+
     generateUtilBoards();
     //this.value = eval();
   }
@@ -169,6 +186,8 @@ class Bitboard {
   public Bitboard castle(int new_pos){
     Bitboard new_bb = new Bitboard(this); //Cloning
     new_bb.makeCastle(new_pos);
+    new_bb.last_piece = 0;
+    new_bb.new_pos = new_pos;
     return new_bb;
   }
 
@@ -176,11 +195,13 @@ class Bitboard {
     if(this.board[this.color][0] < (1L << new_pos)){
       //Kingside castle
       if(this.color == Player.WHITE){
+        this.old_pos = 4;
         this.HAS_WHITE_KING_NOT_MOVED = false;
         this.board[Player.WHITE][0] = 0x0000000000000040L;
         this.board[Player.WHITE][2] = this.board[Player.WHITE][2] ^ 0x00000000000000A0L;
       }
       else{
+        this.old_pos = 60;
         this.HAS_BLACK_KING_NOT_MOVED = false;
         this.board[Player.BLACK][0] = 0x4000000000000000L;
         this.board[Player.BLACK][2] = this.board[Player.BLACK][2] ^ 0xA000000000000000L;
@@ -189,11 +210,13 @@ class Bitboard {
     else{
       //Queenside
       if(this.color == Player.WHITE){
+        this.old_pos = 4;
         this.HAS_WHITE_KING_NOT_MOVED = false;
         this.board[Player.WHITE][0] = 0x0000000000000004L;
         this.board[Player.WHITE][2] = this.board[Player.WHITE][2] ^ 0x0000000000000009L;
       }
       else{
+        this.old_pos = 60;
         this.HAS_BLACK_KING_NOT_MOVED = false;
         this.board[Player.BLACK][0] = 0x0400000000000000L;
         this.board[Player.BLACK][2] = this.board[Player.BLACK][2] ^ 0x0900000000000000L;

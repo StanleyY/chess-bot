@@ -355,8 +355,8 @@ class Bitmap{
     return count;
   }
 
-  public Stack<Move> generateMoves(Bitboard bb){
-    Stack<Move> output = new Stack<Move>();
+  public Stack<Bitboard> generateMoves(Bitboard bb){
+    Stack<Bitboard> output = new Stack<Bitboard>();
     long piece_bitboard = 0L;
 
     if(bb.color == Player.WHITE){
@@ -385,7 +385,7 @@ class Bitmap{
         while(possible_moves > 0){
           int new_pos = Long.numberOfTrailingZeros(possible_moves);
           possible_moves = possible_moves ^ (1L << (new_pos)); // Turning off rightmost bit.
-          output.push(new Move(new Bitboard(bb, bb.color, piece, old_pos, new_pos) , piece, old_pos, new_pos));
+          output.push(new Bitboard(bb, bb.color, piece, old_pos, new_pos));
         }
       }
     }
@@ -395,7 +395,7 @@ class Bitmap{
   }
 
   // Generates the Pawn moves.
-  private void generateMovesHelper(Bitboard bb, Stack<Move> output){
+  private void generateMovesHelper(Bitboard bb, Stack<Bitboard> output){
     long piece_bitboard = bb.board[bb.color][Player.PAWN];
     while(piece_bitboard > 0){
       int old_pos = Long.numberOfTrailingZeros(piece_bitboard);
@@ -409,7 +409,7 @@ class Bitmap{
           possible_moves = possible_moves ^ (1L << (new_pos)); // Turning off rightmost bit.
           // Promotion to queen -> knight
           for(int new_piece = 1; new_piece < 5; new_piece++){
-            output.push(new Move(new Bitboard(bb, bb.color, Player.PAWN, new_piece, old_pos, new_pos) , Player.PAWN, new_piece, old_pos, new_pos));
+            output.push(new Bitboard(bb, bb.color, Player.PAWN, new_piece, old_pos, new_pos));
           }
         }
       }
@@ -417,27 +417,27 @@ class Bitmap{
         while(possible_moves > 0){
           int new_pos = Long.numberOfTrailingZeros(possible_moves);
           possible_moves = possible_moves ^ (1L << (new_pos)); // Turning off rightmost bit.
-          output.push(new Move(new Bitboard(bb, bb.color, Player.PAWN, old_pos, new_pos) , Player.PAWN, old_pos, new_pos));
+          output.push(new Bitboard(bb, bb.color, Player.PAWN, old_pos, new_pos));
         }
       }
     }
   }
 
-  public void kingsideCastleCheck(Bitboard bb, Stack<Move> output){
+  public void kingsideCastleCheck(Bitboard bb, Stack<Bitboard> output){
     if(bb.color == Player.WHITE){
-      if((bb.OCCUPIED_SQUARES & WHITE_KINGSIDE_EMPTY) == 0) output.push(new Move(bb.castle(6), Player.KING, 4, 6));
+      if((bb.OCCUPIED_SQUARES & WHITE_KINGSIDE_EMPTY) == 0) output.push(bb.castle(6));
     }
     else{
-      if((bb.OCCUPIED_SQUARES & BLACK_KINGSIDE_EMPTY) == 0) output.push(new Move(bb.castle(62), Player.KING, 60, 62));
+      if((bb.OCCUPIED_SQUARES & BLACK_KINGSIDE_EMPTY) == 0) output.push(bb.castle(62));
     }
   }
 
-  public void queensideCastleCheck(Bitboard bb, Stack<Move> output){
+  public void queensideCastleCheck(Bitboard bb, Stack<Bitboard> output){
     if(bb.color == Player.WHITE){
-      if((bb.OCCUPIED_SQUARES & WHITE_QUEENSIDE_EMPTY) == 0) output.push(new Move(bb.castle(2), Player.KING, 4, 2));
+      if((bb.OCCUPIED_SQUARES & WHITE_QUEENSIDE_EMPTY) == 0) output.push(bb.castle(2));
     }
     else{
-      if((bb.OCCUPIED_SQUARES & BLACK_QUEENSIDE_EMPTY) == 0) output.push(new Move(bb.castle(58), Player.KING, 60, 58));
+      if((bb.OCCUPIED_SQUARES & BLACK_QUEENSIDE_EMPTY) == 0) output.push(bb.castle(58));
     }
   }
 
