@@ -18,10 +18,17 @@ class Polyglot{
   private static final long[] random64 = random64Table();
   public static void main(String[] args){
     read();
-    //System.out.println("Size: " + book.length);
-    //System.out.println("Entries: " + (book.length / 16));
-    int found = 0;
     /*
+    Bitboard bb = new Bitboard(0);
+    System.out.println("Hash: " + Long.toHexString(hash(bb)));
+    System.out.println("Goal: " + Long.toHexString(0x463b96181691fc9cL));
+    */
+  }
+
+  public static int[] search(Bitboard bb){
+    long hash_key = hash(bb);
+    int best_move = -1;
+    int best_weight = 0;
     for (int i = 0; i < book.length; i = i + 16){
       long key =  0L;
       byte[] by = new byte[]{book[i], book[i+1], book[i+2], book[i+3], book[i+4], book[i+5], book[i+6], book[i+7]};
@@ -42,21 +49,24 @@ class Polyglot{
       weight = (weight << 8) + (book[i + 11] & 0xff);
 
       //long test_key = 0x823c9b50fd114196L;
-      long test_key = 0x463b96181691fc9cL;
-      if(test_key == key){
-        found++;
-        System.out.println("move: " + Integer.toBinaryString(move));
-        System.out.printf("move %c%d, %c%d\n", old_file, old_rank, new_file, new_rank);
-        System.out.println("weight: " + weight);
-        System.out.println("");
+      //long test_key = 0x463b96181691fc9cL;
+      if(hash_key == key && weight > best_weight){
+        //System.out.printf("move %c%d, %c%d\n", old_file, old_rank, new_file, new_rank);
+        best_move = move;
+        best_weight = weight;
       }
     }
-    System.out.println("FOUND MATCHES: " + found); */
-    /*
-    Bitboard bb = new Bitboard(0);
-    System.out.println("Hash: " + Long.toHexString(hash(bb)));
-    System.out.println("Goal: " + Long.toHexString(0x463b96181691fc9cL));
-    */
+    if(best_move != -1) return translateMove(best_move);
+    else return null;
+  }
+
+  public static int[] translateMove(int move){
+    int new_file = (move & 7);
+    int new_rank = ((int)(move >>> 3) & 7);
+    int old_file = (int)((move >>> 6) & 7);
+    int old_rank = ((int)(move >>> 9) & 7);
+
+    return new int[] {old_file + old_rank * 8, new_file +  new_rank * 8};
   }
 
   public static long hash(Bitboard bb){
@@ -103,7 +113,7 @@ class Polyglot{
     return finalKey;
   }
 
-  static void read(){
+  public static void read(){
     try {
       FileInputStream input = new FileInputStream("performance");
       book = new byte[input.available()];

@@ -123,6 +123,18 @@ class Bitboard {
     return output;
   }
 
+  public Bitboard makePolyMove(int old_pos, int new_pos){
+    long temp = 1L << old_pos;
+    int piece = -1;
+    for(int p = 0; p < 6; p++){
+      if((this.board[this.color][p] & temp) != 0) {
+        piece = p;
+        break;
+      }
+    }
+    return new Bitboard(this, this.color, piece, old_pos, new_pos);
+  }
+
   private long[][] makeMove(long[][] bb, int piece_color, int piece, int old_pos, int new_pos){
     long[][] output = new long[2][6];
     // Cloning bitboards

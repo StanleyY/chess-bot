@@ -46,6 +46,7 @@ class Player {
   public static int ENEMY_COLOR = -1;
 
   static Bitmap bitmap = new Bitmap();
+  static Polyglot poly = new Polyglot();
 
   public static void main(String[] args) throws Exception{
     if (args.length < 4) {
@@ -71,7 +72,7 @@ class Player {
 
     JSONParser parser = new JSONParser();
     Bitboard b = new Bitboard(MY_COLOR);
-
+    poly.read();
     try {
       boolean ready = false;
       String lastmove = "";
@@ -113,11 +114,18 @@ class Player {
           b.printBitboard(b.OCCUPIED_SQUARES);
           b.printBitboard(b.ENEMY_SQUARES);
         }
-
-        Stack<Bitboard> move_list = bitmap.generateMoves(b);
-        Bitboard pv = search(move_list);
-        //Move pv = move_list.pop();
-        b = sendMove(pv, move_list);
+        int[] poly_move = poly.search(b);
+        if(poly_move != null){
+          System.out.printf("Poly Move: %s, %s \n", translateMove(poly_move[0]), translateMove(poly_move[1]));
+          b = b.makePolyMove(poly_move[0], poly_move[1]);
+          sendMove(b);
+        }
+        else{
+          Stack<Bitboard> move_list = bitmap.generateMoves(b);
+          Bitboard pv = search(move_list);
+          //Move pv = move_list.pop();
+          b = sendMove(pv, move_list);
+        }
         System.out.printf("\n######### AFTER MOVE NUM: %d #########\n\n", move_num);
         System.out.println("MY COLORS IS: " + MY_COLOR);
         System.out.println("OCCUPIED_SQUARES");
@@ -229,7 +237,6 @@ class Player {
   }
 
   public static Bitboard sendMove(Bitboard pv, Stack<Bitboard> move_list){
-    Random rand = new Random();
     Bitboard move = pv;
     String URL = MOVE_URL + PIECE_NAME.get(move.last_piece) + translateMove(move.old_pos) + translateMove(move.new_pos);
     if(move.promo > 0){
@@ -247,5 +254,14 @@ class Player {
       response = sendGet(URL);
     }
     return move;
+  }
+
+  public static boolean sendMove(Bitboard move){
+    String URL = MOVE_URL + PIECE_NAME.get(move.last_piece) + translateMove(move.old_pos) + translateMove(move.new_pos);
+    if(move.promo > 0){
+      URL = URL + PIECE_NAME.get(move.promo);
+    }
+    String response = sendGet(URL);
+    return !(response.indexOf("false") > -1);
   }
 }
