@@ -121,6 +121,7 @@ class Player {
           sendMove(b);
         }
         else{
+          System.out.println("No move was found, Beginning Search");
           Stack<Bitboard> move_list = bitmap.generateMoves(b);
           Bitboard pv = search(move_list);
           //Move pv = move_list.pop();
@@ -164,9 +165,9 @@ class Player {
     while(move_list.size() > 0){
       current_move = move_list.pop();
       temp = alphabeta(current_move, 5, -40000, 40000, false);
-      System.out.printf("BEST VALUE UPDATED: Piece: %s, Original: %s, New: %s, Score: %d \n\n", PIECE_NAME.get(current_move.last_piece), translateMove(current_move.old_pos), translateMove(current_move.new_pos), temp);
       //System.out.println("Temp" + temp);
       if(temp > best_value){
+        System.out.printf("BEST VALUE UPDATED: Piece: %s, Original: %s, New: %s, Score: %d \n\n", PIECE_NAME.get(current_move.last_piece), translateMove(current_move.old_pos), translateMove(current_move.new_pos), temp);
         pv = current_move;
         best_value = temp;
       }

@@ -10,6 +10,8 @@ learn  uint32 4
 
 class Polyglot{
   public static byte[] book = null;
+  public static byte[] second_book = null;
+
   // REMOVE WHEN DONE TESTING
   public static final char[] FILE_NAME = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
   public static final String[] PIECE_NAME = new String[]{"K", "Q", "R", "B", "N", "P"};
@@ -52,6 +54,39 @@ class Polyglot{
       //long test_key = 0x463b96181691fc9cL;
       if(hash_key == key && weight > best_weight){
         //System.out.printf("move %c%d, %c%d\n", old_file, old_rank, new_file, new_rank);
+        best_move = move;
+        best_weight = weight;
+      }
+    }
+    if(best_move != -1) return translateMove(best_move);
+    else return second_search(bb);
+  }
+
+  public static int[] second_search(Bitboard bb){
+    System.out.println("Starting Second Search");
+    long hash_key = hash(bb);
+    int best_move = -1;
+    int best_weight = 0;
+    for (int i = 0; i < second_book.length; i = i + 16){
+      long key =  0L;
+      byte[] by = new byte[]{second_book[i], second_book[i+1], second_book[i+2], second_book[i+3], second_book[i+4], second_book[i+5], second_book[i+6], second_book[i+7]};
+      for (int j = 0; j < by.length; j++){
+        key = (key << 8) + (by[j] & 0xff);
+      }
+      int move = 0;
+      move = (move << 8) + (second_book[i + 8] & 0xff);
+      move = (move << 8) + (second_book[i + 9] & 0xff);
+
+      char old_file = FILE_NAME[(move & 7)];
+      int old_rank = ((int)(move >>> 3) & 7) + 1;
+      char new_file = FILE_NAME[(int)((move >>> 6) & 7)];
+      int new_rank = ((int)(move >>> 9) & 7) + 1;
+
+      int weight = 0;
+      weight = (weight << 8) + (second_book[i + 10] & 0xff);
+      weight = (weight << 8) + (second_book[i + 11] & 0xff);
+
+      if(hash_key == key && weight > best_weight){
         best_move = move;
         best_weight = weight;
       }
@@ -118,6 +153,10 @@ class Polyglot{
       FileInputStream input = new FileInputStream("performance");
       book = new byte[input.available()];
       input.read(book);
+      input.close();
+      input = new FileInputStream("performance2");
+      second_book = new byte[input.available()];
+      input.read(second_book);
       input.close();
     } catch (java.io.IOException e) {
       e.printStackTrace();
