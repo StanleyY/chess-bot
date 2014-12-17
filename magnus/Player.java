@@ -104,6 +104,12 @@ class Player {
               b = b.castle(new_pos);
               b.color = b.color ^ 1;
             }
+            else if(piece == PAWN && new_pos % 8 != old_pos % 8 && (b.EMPTY_SQUARES & (1L << new_pos)) != 0){
+              // Swap colors, castle, swap again.
+              b.color = b.color ^ 1;
+              b = b.makeEnPassant(old_pos, new_pos);
+              b.color = b.color ^ 1;
+            }
             else{
               b = new Bitboard(b, ENEMY_COLOR, piece, old_pos, new_pos);
             }
