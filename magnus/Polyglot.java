@@ -138,9 +138,11 @@ class Polyglot{
       if(bb.HAS_BLACK_QUEEN_ROOK_NOT_MOVED) finalKey ^= random64[offset + 3];
     }
 
-    // TODO: Fix when I get en passant working.
     offset = 772;
-    //finalKey ^= random64[offset];
+    if(bb.last_piece == Player.PAWN && Math.abs(bb.old_pos - bb.new_pos) > 10){
+      if((bb.new_pos % 8 != 0 && (bb.board[bb.color][5] & (1L << (bb.new_pos - 1))) != 0) || (bb.new_pos % 8 != 7 && (bb.board[bb.color][5] & (1L << (bb.new_pos + 1))) != 0))
+        finalKey ^= random64[offset + (bb.new_pos % 8)];
+    }
 
     if(bb.color == Player.WHITE) {
       finalKey ^= random64[780];
