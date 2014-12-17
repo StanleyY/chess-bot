@@ -349,8 +349,8 @@ class Bitmap{
   static int count_set_bits(long n){
     int count = 0; // count accumulates the total bits set
     while(n != 0){
-        n &= (n-1); // clear the least significant bit set
-        count++;
+      n &= (n-1); // clear the least significant bit set
+      count++;
     }
     return count;
   }
@@ -371,6 +371,8 @@ class Bitmap{
         if(bb.HAS_BLACK_QUEEN_ROOK_NOT_MOVED && ((bb.board[Player.BLACK][2] & (1L << 56)) == (1L << 56))) queensideCastleCheck(bb, output);
       }
     }
+
+    if(bb.last_piece == Player.PAWN && Math.abs(bb.old_pos - bb.new_pos) > 10) generateEnPassant(bb, output);
 
     for (int piece = 4; piece > -1; piece--){
       piece_bitboard = bb.board[bb.color][piece];
@@ -421,6 +423,15 @@ class Bitmap{
         }
       }
     }
+  }
+
+  private void generateEnPassant(Bitboard bb, Stack<Bitboard> output){
+    // Check left, ensure that we are not on File A.
+    if(bb.new_pos % 8 != 0 && (bb.board[bb.color][5] & (1L << (bb.new_pos - 1))) != 0 ) output.push(bb.makeEnPassant(bb.new_pos - 1, bb.new_pos));
+    else System.out.println("NOTHING ON LEFT");
+    // Check Right, ensure that we are not on File H.
+    if(bb.new_pos % 8 != 7 && (bb.board[bb.color][5] & (1L << (bb.new_pos + 1))) != 0) output.push(bb.makeEnPassant(bb.new_pos + 1, bb.new_pos));
+    else {System.out.println("NOTHING ON RIGHT"); bb.printBitboard(bb.board[bb.color][5]); System.out.println((bb.board[bb.color][5] & (1L << (bb.new_pos + 1))));}
   }
 
   public void kingsideCastleCheck(Bitboard bb, Stack<Bitboard> output){

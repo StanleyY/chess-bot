@@ -303,6 +303,27 @@ class Bitboard {
     this.generateUtilBoards();
   }
 
+  public Bitboard makeEnPassant(int old_pos, int enemy_pawn_pos){
+    Bitboard new_bb = new Bitboard(this);
+    new_bb.capture = true;
+    new_bb.last_piece = Player.PAWN;
+    new_bb.old_pos = old_pos;
+
+    if(this.color == Player.WHITE){
+      new_bb.board[Player.WHITE][5] = (new_bb.board[Player.WHITE][5] ^ (1L << old_pos));
+      new_bb.board[Player.WHITE][5] = (new_bb.board[Player.WHITE][5] | (1L << (enemy_pawn_pos + 8)));
+      new_bb.board[Player.BLACK][5] = (new_bb.board[Player.BLACK][5] ^ (1L << enemy_pawn_pos));
+      new_bb.new_pos = enemy_pawn_pos + 8;
+    }
+    else{
+      new_bb.board[Player.BLACK][5] = (new_bb.board[Player.BLACK][5] ^ (1L << old_pos));
+      new_bb.board[Player.BLACK][5] = (new_bb.board[Player.BLACK][5] | (1L << (enemy_pawn_pos - 8)));
+      new_bb.board[Player.WHITE][5] = (new_bb.board[Player.WHITE][5] ^ (1L << enemy_pawn_pos));
+      new_bb.new_pos = enemy_pawn_pos - 8;
+    }
+    return new_bb;
+  }
+
   public void generateUtilBoards(){
     long temp = 0L;
     for (int color = 0; color < 2; color++){
