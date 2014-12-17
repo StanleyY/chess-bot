@@ -124,7 +124,7 @@ class Player {
         if(!poly_success){
           System.out.println("No move was found, Beginning Search");
           Stack<Bitboard> move_list = bitmap.generateMoves(b);
-          Bitboard pv = search(move_list);
+          Bitboard pv = search(move_list, bitmap.count_set_bits(b.OCCUPIED_SQUARES));
           //Move pv = move_list.pop();
           b = sendMove(pv, move_list);
         }
@@ -157,11 +157,14 @@ class Player {
     }*/
   }
 
-  public static Bitboard search(Stack<Bitboard> move_list){
+  public static Bitboard search(Stack<Bitboard> move_list, int number_of_pieces){
     Bitboard pv = null;
     Bitboard current_move;
     int best_value = -40000;
     int temp;
+    int depth = 5;
+    if (number_of_pieces < 10) depth = 7;
+    if (number_of_pieces < 6) depth = 9;
     System.out.println("Start time: " + new java.util.Date());
     while(move_list.size() > 0){
       current_move = move_list.pop();
