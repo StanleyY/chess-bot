@@ -498,12 +498,12 @@ class Bitmap{
     down_moves = (down_moves ^ down_board[pos]) & bb.ENEMY_AND_EMPTY_SQUARES;
 
     left_moves = ((left_moves >>> 1) | (left_moves >>> 2) | (left_moves >>> 3) |
-                (left_moves >>> 6) | (left_moves >>> 5) | (left_moves >>> 6));
+                (left_moves >>> 4) | (left_moves >>> 5) | (left_moves >>> 6));
     left_moves = left_moves & left_board[pos];
     left_moves = (left_moves ^ left_board[pos]) & bb.ENEMY_AND_EMPTY_SQUARES;
 
     right_moves = ((right_moves << 1) | (right_moves << 2) | (right_moves << 3) |
-                (right_moves << 6) | (right_moves << 5) | (right_moves << 6));
+                (right_moves << 4) | (right_moves << 5) | (right_moves << 6));
     right_moves = right_moves & right_board[pos];
     right_moves = (right_moves ^ right_board[pos]) & bb.ENEMY_AND_EMPTY_SQUARES;
 
