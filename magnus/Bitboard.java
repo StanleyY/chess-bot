@@ -132,6 +132,18 @@ class Bitboard {
         break;
       }
     }
+    if(piece == Player.KING && (old_pos % 8) == 4){
+      if(new_pos == (0 + 63 * this.color) || new_pos == (7 + 63 * this.color)){
+        if(old_pos / 8 > 0){ // Black Castle
+          if(new_pos == 56) return this.castle(58);
+          else return this.castle(62);
+        }
+        else{
+          if(new_pos == 0) return this.castle(2);
+          else return this.castle(6);
+        }
+      }
+    }
     return new Bitboard(this, this.color, piece, old_pos, new_pos);
   }
 
