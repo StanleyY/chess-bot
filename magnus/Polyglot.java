@@ -154,7 +154,7 @@ class Polyglot{
       book = new byte[input.available()];
       input.read(book);
       input.close();
-      input = new FileInputStream("performance2");
+      input = new FileInputStream("general");
       second_book = new byte[input.available()];
       input.read(second_book);
       input.close();

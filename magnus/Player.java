@@ -164,10 +164,11 @@ class Player {
     System.out.println("Start time: " + new java.util.Date());
     while(move_list.size() > 0){
       current_move = move_list.pop();
-      temp = alphabeta(current_move, 5, -40000, 40000, false);
+      //System.out.printf("!!!!!!!!!!!!!TRYING: Piece: %s, Original: %s, New: %s !!!!!!!!!! \n\n", PIECE_NAME.get(current_move.last_piece), translateMove(current_move.old_pos), translateMove(current_move.new_pos));
+      temp = alphabeta(current_move, 5, best_value, 40000, false);
       //System.out.println("Temp" + temp);
       if(temp > best_value){
-        System.out.printf("BEST VALUE UPDATED: Piece: %s, Original: %s, New: %s, Score: %d \n\n", PIECE_NAME.get(current_move.last_piece), translateMove(current_move.old_pos), translateMove(current_move.new_pos), temp);
+        //System.out.printf("BEST VALUE UPDATED: Piece: %s, Original: %s, New: %s, Score: %d \n\n", PIECE_NAME.get(current_move.last_piece), translateMove(current_move.old_pos), translateMove(current_move.new_pos), temp);
         pv = current_move;
         best_value = temp;
       }
@@ -180,17 +181,19 @@ class Player {
 
   public static int alphabeta(Bitboard node, int depth, int alpha, int beta, boolean max){
     if (depth == 0 || node.board[WHITE][0] == 0 || node.board[BLACK][0] == 0){
-      return node.eval();
+      //System.out.printf("TERMINAL MOVE: Color: %d Piece: %s, Original: %s to %s, Score: %d\n", node.color, PIECE_NAME.get(node.last_piece), translateMove(node.old_pos), translateMove(node.new_pos), node.eval(MY_COLOR));
+      return node.eval(MY_COLOR);
     }
     int score;
     node.color = node.color ^ 1;
+    node.generateUtilBoards();
     Stack<Bitboard> children = bitmap.generateMoves(node);
     Bitboard child;
     if(max){
       while(children.size() > 0){
         child = children.pop();
         score = alphabeta(child, depth - 1, alpha, beta, false);
-        if(score > alpha) alpha =  score;
+        if(score > alpha) alpha = score;
         if(beta <= alpha) break;
       }
       return alpha;

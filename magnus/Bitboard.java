@@ -257,17 +257,17 @@ class Bitboard {
   }
 
   // TODO: Make actual evaluation function.
-  public int eval(){
-    return materialValue();
+  public int eval(int color){
+    return materialValue(color);
   }
 
-  private int materialValue(){
-    int total = 30000 * (Bitmap.count_set_bits(this.board[this.color][0]) - Bitmap.count_set_bits(this.board[this.color ^ 1][0]))
-              + 900 * (Bitmap.count_set_bits(this.board[this.color][1]) - Bitmap.count_set_bits(this.board[this.color ^ 1][1]))
-              + 600 * (Bitmap.count_set_bits(this.board[this.color][2]) - Bitmap.count_set_bits(this.board[this.color ^ 1][2]))
-              + 380 * (Bitmap.count_set_bits(this.board[this.color][3]) - Bitmap.count_set_bits(this.board[this.color ^ 1][3]))
-              + 350 * (Bitmap.count_set_bits(this.board[this.color][4]) - Bitmap.count_set_bits(this.board[this.color ^ 1][4]))
-              + 100 * (Bitmap.count_set_bits(this.board[this.color][5]) - Bitmap.count_set_bits(this.board[this.color ^ 1][5]));
+  private int materialValue(int color){
+    int total = 30000 * (Bitmap.count_set_bits(this.board[color][0]) - Bitmap.count_set_bits(this.board[color ^ 1][0]))
+              + 900 * (Bitmap.count_set_bits(this.board[color][1]) - Bitmap.count_set_bits(this.board[color ^ 1][1]))
+              + 600 * (Bitmap.count_set_bits(this.board[color][2]) - Bitmap.count_set_bits(this.board[color ^ 1][2]))
+              + 380 * (Bitmap.count_set_bits(this.board[color][3]) - Bitmap.count_set_bits(this.board[color ^ 1][3]))
+              + 350 * (Bitmap.count_set_bits(this.board[color][4]) - Bitmap.count_set_bits(this.board[color ^ 1][4]))
+              + 100 * (Bitmap.count_set_bits(this.board[color][5]) - Bitmap.count_set_bits(this.board[color ^ 1][5]));
     return total;
   }
 
