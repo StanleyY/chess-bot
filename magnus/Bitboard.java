@@ -28,6 +28,59 @@ class Bitboard {
   public boolean HAS_BLACK_KING_ROOK_NOT_MOVED = true;
   public boolean HAS_BLACK_QUEEN_ROOK_NOT_MOVED = true;
 
+  public static final int[] knight_pos_value = {-30, -20, 10, 20, 20, 10, -20, -30,
+                                                -20, -10, 15, 25, 25, 15, -10, -20,
+                                                -10,  20, 40, 45, 45, 40,  20, -10,
+                                                  0,  30, 45, 50, 50, 45,  30,   0,
+                                                  0,  30, 45, 50, 50, 45,  30,   0,
+                                                -10,  20, 40, 45, 45, 40,  20, -10,
+                                                -20, -10, 15, 25, 25, 15, -10, -20,
+                                                -30, -20, 10, 20, 20, 10, -20, -30,};
+
+  public static final int[] bishop_pos_value = {0, -20, 0, 0, 0, 0, -20, 0,
+                                                20, 25, 40, 50, 50, 40, 25, 20,
+                                                20, 30, 50, 50, 50, 50, 30, 20,
+                                                30, 30, 50, 50, 50, 50, 30, 30,
+                                                30, 30, 50, 50, 50, 50, 30, 30,
+                                                20, 30, 50, 50, 50, 50, 30, 20,
+                                                20, 25, 40, 50, 50, 40, 25, 20,
+                                                0, -20, 0, 0, 0, 0, -20, 0};
+
+  public static final int[] rook_pos_value = {0, 0, 0, 0, 0, 0, 0, 0,
+                                               10, 10, 10, 10, 10, 10, 10, 10,
+                                               0, 0, 0, 5, 5, 0, 0, 0,
+                                               0, 0, 0, 10, 10, 0, 0, 0,
+                                               0, 0, 0, 10, 10, 0, 0, 0,
+                                               0, 0, 0, 5, 5, 0, 0, 0,
+                                               10, 10, 10, 10, 10, 10, 10, 10,
+                                               0, 0, 0, 0, 0, 0, 0, 0};
+
+  public static final int[] queen_pos_value = {0, 0, 0, 0, 0, 0, 0, 0,
+                                               0, 0, 0, 0, 0, 0, 0, 0,
+                                               0, 0, 0, 5, 5, 0, 0, 0,
+                                               0, 0, 0, 10, 10, 0, 0, 0,
+                                               0, 0, 0, 10, 10, 0, 0, 0,
+                                               0, 0, 0, 5, 5, 0, 0, 0,
+                                               0, 0, 0, 0, 0, 0, 0, 0,
+                                               0, 0, 0, 0, 0, 0, 0, 0};
+
+  public static final int[][] king_pos_value = {{-50, -50, -50, -50, -50, -50, -50, -50,
+                                                -50, -50, -50, -50, -50, -50, -50, -50,
+                                                -10, -10, -10, -10, -10, -10, -10, -10,
+                                                -10, -10, -20, -30, -30, -20, -10, -10,
+                                                -10, -10, -20, -30, -30, -20, -10, -10,
+                                                -10, -10, -10, -10, -10, -10, -10, -10,
+                                                -10, -10, -10, -10, -10, -10, -10, -10,
+                                                   0, 0, 40, 0, 0, 0, 50, 0},
+
+                                               {0, 0, 40, 0, 0, 0, 50, 0,
+                                                -10, -10, -10, -10, -10, -10, -10, -10,
+                                                -10, -10, -20, -30, -30, -20, -10, -10,
+                                                -10, -10, -20, -30, -30, -20, -10, -10,
+                                                -10, -10, -10, -10, -10, -10, -10, -10,
+                                                -10, -10, -10, -10, -10, -10, -10, -10,
+                                                -50, -50, -50, -50, -50, -50, -50, -50,
+                                                -50, -50, -50, -50, -50, -50, -50, -50}};
 
   public Bitboard(int player_color){
     this.color = player_color;
@@ -271,17 +324,95 @@ class Bitboard {
 
   // TODO: Make actual evaluation function.
   public int eval(int color){
-    return materialValue(color);
+    return materialValue(color) + queen_value(color) + knight_value(color) + rook_value(color) + bishop_value(color) + king_value(color);
   }
 
   private int materialValue(int color){
     int total = 30000 * (Bitmap.count_set_bits(this.board[color][0]) - Bitmap.count_set_bits(this.board[color ^ 1][0]))
               + 900 * (Bitmap.count_set_bits(this.board[color][1]) - Bitmap.count_set_bits(this.board[color ^ 1][1]))
-              + 600 * (Bitmap.count_set_bits(this.board[color][2]) - Bitmap.count_set_bits(this.board[color ^ 1][2]))
-              + 380 * (Bitmap.count_set_bits(this.board[color][3]) - Bitmap.count_set_bits(this.board[color ^ 1][3]))
-              + 350 * (Bitmap.count_set_bits(this.board[color][4]) - Bitmap.count_set_bits(this.board[color ^ 1][4]))
-              + 100 * (Bitmap.count_set_bits(this.board[color][5]) - Bitmap.count_set_bits(this.board[color ^ 1][5]));
+              + 700 * (Bitmap.count_set_bits(this.board[color][2]) - Bitmap.count_set_bits(this.board[color ^ 1][2]))
+              + 480 * (Bitmap.count_set_bits(this.board[color][3]) - Bitmap.count_set_bits(this.board[color ^ 1][3]))
+              + 450 * (Bitmap.count_set_bits(this.board[color][4]) - Bitmap.count_set_bits(this.board[color ^ 1][4]))
+              + 250 * (Bitmap.count_set_bits(this.board[color][5]) - Bitmap.count_set_bits(this.board[color ^ 1][5]));
     return total;
+  }
+
+  private int king_value(int color){
+    int my_king_pos = Long.numberOfTrailingZeros(this.board[color][0]);
+    int val = 0;
+    if (my_king_pos < 64) val += king_pos_value[color][my_king_pos];
+
+    int enemy_king_pos = Long.numberOfTrailingZeros(this.board[color ^ 1][0]);
+    if (enemy_king_pos < 64) val -= king_pos_value[color ^ 1][enemy_king_pos];
+    return val;
+  }
+
+  private int queen_value(int color){
+    long my_queen_bitboard = this.board[color][1];
+    long enemy_queen_bitboard = this.board[color ^ 1][1];
+    int val = 0;
+    while(my_queen_bitboard != 0){
+      int pos = Long.numberOfTrailingZeros(my_queen_bitboard);
+      my_queen_bitboard = my_queen_bitboard ^ (1L << (pos) );
+      val += queen_pos_value[pos];
+    }
+    while(enemy_queen_bitboard != 0){
+      int pos = Long.numberOfTrailingZeros(enemy_queen_bitboard);
+      enemy_queen_bitboard = enemy_queen_bitboard ^ (1L << (pos) );
+      val -= queen_pos_value[pos];
+    }
+    return val;
+  }
+
+  private int rook_value(int color){
+    long my_rook_bitboard = this.board[color][2];
+    long enemy_rook_bitboard = this.board[color ^ 1][2];
+    int val = 0;
+    while(my_rook_bitboard != 0){
+      int pos = Long.numberOfTrailingZeros(my_rook_bitboard);
+      my_rook_bitboard = my_rook_bitboard ^ (1L << (pos) );
+      val += rook_pos_value[pos];
+    }
+    while(enemy_rook_bitboard != 0){
+      int pos = Long.numberOfTrailingZeros(enemy_rook_bitboard);
+      enemy_rook_bitboard = enemy_rook_bitboard ^ (1L << (pos) );
+      val -= rook_pos_value[pos];
+    }
+    return val;
+  }
+
+  private int bishop_value(int color){
+    long my_bishop_bitboard = this.board[color][3];
+    long enemy_bishop_bitboard = this.board[color ^ 1][3];
+    int val = 0;
+    while(my_bishop_bitboard != 0){
+      int pos = Long.numberOfTrailingZeros(my_bishop_bitboard);
+      my_bishop_bitboard = my_bishop_bitboard ^ (1L << (pos) );
+      val += bishop_pos_value[pos];
+    }
+    while(enemy_bishop_bitboard != 0){
+      int pos = Long.numberOfTrailingZeros(enemy_bishop_bitboard);
+      enemy_bishop_bitboard = enemy_bishop_bitboard ^ (1L << (pos) );
+      val -= bishop_pos_value[pos];
+    }
+    return val;
+  }
+
+  private int knight_value(int color){
+    long my_knight_bitboard = this.board[color][4];
+    long enemy_knight_bitboard = this.board[color ^ 1][4];
+    int val = 0;
+    while(my_knight_bitboard != 0){
+      int pos = Long.numberOfTrailingZeros(my_knight_bitboard);
+      my_knight_bitboard = my_knight_bitboard ^ (1L << (pos) );
+      val += knight_pos_value[pos];
+    }
+    while(enemy_knight_bitboard != 0){
+      int pos = Long.numberOfTrailingZeros(enemy_knight_bitboard);
+      enemy_knight_bitboard = enemy_knight_bitboard ^ (1L << (pos) );
+      val -= knight_pos_value[pos];
+    }
+    return val;
   }
 
   public void printBitboard(long board){
