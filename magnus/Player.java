@@ -122,7 +122,7 @@ class Player {
         }
         int[] poly_move = poly.search(b);
         boolean poly_success = false;
-        if(poly_move != null){
+        if(move_num < 20 && poly_move != null){
           System.out.printf("Poly Move: %s, %s \n", translateMove(poly_move[0]), translateMove(poly_move[1]));
           b = b.makePolyMove(poly_move[0], poly_move[1]);
           poly_success = sendMove(b);
@@ -169,7 +169,7 @@ class Player {
     int best_value = -40000;
     int temp;
     int depth = 5;
-    if (number_of_pieces < 10) depth = 7;
+    if (number_of_pieces < 15) depth = 7;
     if (number_of_pieces < 6) depth = 9;
     System.out.println("Start time: " + new java.util.Date());
     while(move_list.size() > 0){
