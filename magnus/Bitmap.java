@@ -428,10 +428,8 @@ class Bitmap{
   private void generateEnPassant(Bitboard bb, Stack<Bitboard> output){
     // Check left, ensure that we are not on File A.
     if(bb.new_pos % 8 != 0 && (bb.board[bb.color][5] & (1L << (bb.new_pos - 1))) != 0 ) output.push(bb.makeEnPassant(bb.new_pos - 1, bb.new_pos));
-    else System.out.println("NOTHING ON LEFT");
     // Check Right, ensure that we are not on File H.
     if(bb.new_pos % 8 != 7 && (bb.board[bb.color][5] & (1L << (bb.new_pos + 1))) != 0) output.push(bb.makeEnPassant(bb.new_pos + 1, bb.new_pos));
-    else {System.out.println("NOTHING ON RIGHT"); bb.printBitboard(bb.board[bb.color][5]); System.out.println((bb.board[bb.color][5] & (1L << (bb.new_pos + 1))));}
   }
 
   public void kingsideCastleCheck(Bitboard bb, Stack<Bitboard> output){
