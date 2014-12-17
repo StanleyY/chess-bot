@@ -11,10 +11,9 @@ class Bitboard {
   public int old_pos;
   public int new_pos;
   public int promo = -1;
+  public boolean capture = false;
 
   // Useful utility boards
-  private long FULL_BOARD = 0xFFFFFFFFFFFFFFFFL;
-
   public long ENEMY_SQUARES = 0L;
   public long EMPTY_SQUARES = 0L;
   public long ENEMY_AND_EMPTY_SQUARES = 0L;
@@ -181,6 +180,7 @@ class Bitboard {
     for(int p = 0; p < 6; p++){
       if ((ending_pos & output[piece_color][p]) != 0) {
         output[piece_color][p] = output[piece_color][p] ^ ending_pos;
+        this.capture = true;
       }
     }
     return output;
@@ -202,6 +202,7 @@ class Bitboard {
     for(int p = 0; p < 6; p++){
       if ((ending_pos & output[piece_color][p]) != 0) {
         output[piece_color][p] = output[piece_color][p] ^ ending_pos;
+        this.capture = true;
       }
     }
     return output;
