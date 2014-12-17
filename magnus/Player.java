@@ -115,12 +115,13 @@ class Player {
           b.printBitboard(b.ENEMY_SQUARES);
         }
         int[] poly_move = poly.search(b);
+        boolean poly_success = false;
         if(poly_move != null){
           System.out.printf("Poly Move: %s, %s \n", translateMove(poly_move[0]), translateMove(poly_move[1]));
           b = b.makePolyMove(poly_move[0], poly_move[1]);
-          sendMove(b);
+          poly_success = sendMove(b);
         }
-        else{
+        if(!poly_success){
           System.out.println("No move was found, Beginning Search");
           Stack<Bitboard> move_list = bitmap.generateMoves(b);
           Bitboard pv = search(move_list);
