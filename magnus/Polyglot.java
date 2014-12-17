@@ -58,7 +58,7 @@ class Polyglot{
         best_weight = weight;
       }
     }
-    if(best_move != -1) return translateMove(best_move);
+    if(best_move != -1) {System.out.println("Move Weight: " + best_weight); return translateMove(best_move);}
     else return second_search(bb);
   }
 
@@ -91,7 +91,7 @@ class Polyglot{
         best_weight = weight;
       }
     }
-    if(best_move != -1) return translateMove(best_move);
+    if(best_move != -1) {System.out.println("Move Weight: " + best_weight); return translateMove(best_move);}
     else return null;
   }
 

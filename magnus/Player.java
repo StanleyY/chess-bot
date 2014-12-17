@@ -179,7 +179,7 @@ class Player {
     }
     System.out.println("End time: " + new java.util.Date() + "\n");
     System.out.println("Best Score: " + best_value);
-    if (pv.color != MY_COLOR) pv.color = pv.color ^ 1;
+    if (pv.color != MY_COLOR) {pv.color = pv.color ^ 1; pv.generateUtilBoards();}
     return pv;
   }
 
